@@ -22,6 +22,8 @@ set(PROJECT_SOURCES
         resource_manager.h
         image_widget.cpp
         image_widget.h
+        start_page.cpp
+        start_page.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

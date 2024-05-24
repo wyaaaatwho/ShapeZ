@@ -14,10 +14,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow( const QPixmap & pic , QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr, resource_manager &vault);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
+    QPushButton *button;
 };
 #endif // MAINWINDOW_H

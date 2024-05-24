@@ -12,7 +12,8 @@ class image_widget : public QWidget
 public:
     explicit image_widget(const QPixmap & pic, QWidget *parent = nullptr);
     ~image_widget();
-    void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event, int x, int y) override;
+    QPixmap pic;
 };
 
 #endif //SHAPEZ_IMAGE_WIDGET_H

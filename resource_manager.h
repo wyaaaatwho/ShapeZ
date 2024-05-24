@@ -9,7 +9,7 @@
 class resource_manager
 {
 private:
-    QString path=":/resource/";
+    
     QHash<QString, QPixmap> my_resources;
 public:
     resource_manager();

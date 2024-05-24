@@ -2,20 +2,20 @@
 #include "./ui_mainwindow.h"
 
 
-MainWindow::MainWindow(const QPixmap &pic,QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent, resource_manager &vault): QMainWindow(parent), ui(new Ui::MainWindow), resource_manager(vault)
 {
     ui->setupUi(this);
     this->resize(1080, 800);
     this->setWindowTitle("ShapeZ");
-
-    QPalette palette;
-    palette.setBrush(QPalette::Window, pic);
-    this->setPalette(palette); // set background image in the window
-
+    start_page = new start_page(resource_manager, this);
+    this->setCentralWidget(start_page);
+    start_page->show();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-
 }
+
+
+
