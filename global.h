@@ -7,33 +7,36 @@
 #ifndef SHAPEZ_GLOBAL_H
 #define SHAPEZ_GLOBAL_H
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QPixmap>
-#include <QPainter>
-#include <QPaintEvent>
-#include <QMouseEvent>
-#include <QHash>
-#include <QPalette>
-#include <QPushButton>
-#include <Qtimer>
-#include <QDebug>
-#include <QIcon>
-#include <QWidget>
-#include "mainwindow.h"
-#include "resource_manager.h"
-#include "image_widget.h"
-#include "start_page.h"
 
-
-#define window_width 1080
-#define window_height 800
-#define cube_size 40
+#define window_width_1 1440
+#define window_height_1 800
+#define cube_size 80
 #define started 1
 #define stopped 0
 #define paused 2
 #define game_over 3
 
-QString path=":/resource/";
+#include <QHash>
+#include <QPixmap>
+
+class resource_manager
+{
+    private:
+        QHash<QString, QPixmap> my_resources;
+public:
+    static resource_manager& instance()
+    {
+        static resource_manager _instance;
+        return _instance;
+    }
+    ~resource_manager();
+    QPixmap get_pic(QString pic_name);
+
+private:
+    resource_manager();
+    resource_manager(const resource_manager&) = delete;
+    resource_manager& operator=(const resource_manager&) = delete;
+};
+
 
 #endif //SHAPEZ_GLOBAL_H

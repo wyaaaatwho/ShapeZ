@@ -19,11 +19,15 @@ set(PROJECT_SOURCES
         mainwindow.ui
         global.h
         resource_manager.cpp
-        resource_manager.h
         image_widget.cpp
         image_widget.h
         start_page.cpp
         start_page.h
+        game_page.cpp
+        game_page.h
+        help_page.cpp
+        help_page.h
+        help_page.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

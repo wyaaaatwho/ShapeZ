@@ -1,7 +1,19 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#include <QApplication>
+#include <QMainWindow>
+#include <QPixmap>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QMouseEvent>
+#include <QHash>
+#include <QPalette>
+#include <QPushButton>
+#include <Qtimer>
+#include <QDebug>
+#include <QIcon>
+#include <QWidget>
 
-#include "global.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -14,11 +26,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr, resource_manager &vault);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
     QPushButton *button;
+
 };
 #endif // MAINWINDOW_H

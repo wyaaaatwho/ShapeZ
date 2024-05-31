@@ -4,7 +4,19 @@
 
 #ifndef SHAPEZ_IMAGE_WIDGET_H
 #define SHAPEZ_IMAGE_WIDGET_H
-#include "global.h"
+#include <QApplication>
+#include <QMainWindow>
+#include <QPixmap>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QMouseEvent>
+#include <QHash>
+#include <QPalette>
+#include <QPushButton>
+#include <Qtimer>
+#include <QDebug>
+#include <QIcon>
+#include <QWidget>
 
 class image_widget : public QWidget
 {
@@ -12,7 +24,7 @@ class image_widget : public QWidget
 public:
     explicit image_widget(const QPixmap & pic, QWidget *parent = nullptr);
     ~image_widget();
-    void paintEvent(QPaintEvent *event, int x, int y) override;
+    void paintEvent(QPaintEvent *event, int x, int y);
     QPixmap pic;
 };
 
