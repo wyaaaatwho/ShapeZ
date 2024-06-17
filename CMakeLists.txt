@@ -28,6 +28,12 @@ set(PROJECT_SOURCES
         help_page.cpp
         help_page.h
         help_page.h
+        store_page.cpp
+        store_page.h
+        belt.cpp
+        belt.h
+        mine.cpp
+        mine.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -28,22 +28,41 @@ class game_page :public QWidget
 public:
     game_page(QWidget *parent=nullptr);
     ~game_page();
-    void paintEvent(QPaintEvent *event) override;
 
-private slots:
-    void handle_back_button();
+    void paintEvent(QPaintEvent *event) override;
+    void draw_belt(QPainter &painter);
+    void draw_mine(QPainter &painter);
+
+    signals:
+        void changePage(int index);
+
+public slots:
+        void handle_belt();
+
+protected:
+    //void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+
+
 
 private:
     QPushButton *store_button;
-    QPushButton *help_button;
     QPushButton *back_button;
     QPushButton *cutter;
     QPushButton *miner;
-    QPushButton *rope;
+    QPushButton *belt_button;
     QPushButton *trash_bin;
     QPixmap game_background;
+    QPixmap cutter_pic;
+    QPixmap miner_pic;
+    QPixmap belt_pic;
+    QPixmap trash_bin_pic;
+    QTimer *timer;
 
+    void mousePressEvent(QMouseEvent *event);
 };
+
 
 
 #endif //SHAPEZ_GAME_PAGE_H

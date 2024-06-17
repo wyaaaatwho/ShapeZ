@@ -6,6 +6,9 @@
 #include "help_page.h"
 #include "start_page.h"
 #include "global.h"
+#include "belt.h"
+#include "mine.h"
+#include <iostream>
 
 
 
@@ -16,6 +19,16 @@ game_page::game_page(QWidget *parent):QWidget(parent)
     setFixedSize(window_width_1,window_height_1);
     setWindowTitle("Shapez");
     game_background=vault.get_pic("game_background");
+
+    setMouseTracking(true); // start tracking mouse
+
+    timer = new QTimer(reinterpret_cast<QObject *>(this));
+    connect(timer, &QTimer::timeout, this, QOverload<>::of(&game_page::update));
+    timer->start(16); // 每秒大约60帧，16ms刷新一次（1000ms / 60帧）
+
+    // Initialize the mine
+    mine  mine_1(vault.instance().get_pic("mine_1"));
+
 
     /*store_button=new QPushButton(this);
     store_button->setGeometry(0,0,100,50);
@@ -50,32 +63,85 @@ game_page::game_page(QWidget *parent):QWidget(parent)
 
     back_button = new QPushButton("Back", this);
     back_button->setGeometry(QRect(QPoint(0,0), QSize(80, 80)));
+    back_button->setIcon(vault.get_pic("back_button"));
     back_button->setStyleSheet(("QPushButton {"
-                                "font-size: 20px;"
+                                "font-size: 16px;"
                                 "border: 2px solid black; border-radius: 10px; "      // border style
                                 "background-color: lightgray;" // background color
                                 "padding: 5px;"                // padding
                                 "qproperty-iconSize: 24px 24px;" // icon size
                                 "}"
                                 "QPushButton:hover {"
-                                "font-size: 20px;"
+                                "font-size: 16px;"
                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
                                 " background-color: lightblue;" // hover background
                                 "}"));
-    connect(back_button, SIGNAL(clicked()), this, SLOT(handle_back_button()));
+    connect(back_button, &QPushButton::clicked, [this]() { emit changePage(0); });
 
+    store_button = new QPushButton("Store", this);
+    store_button->setGeometry(QRect(QPoint(0,80), QSize(80, 80)));
+    store_button->setIcon(vault.get_pic("store_button"));
+    store_button->setStyleSheet(("QPushButton {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid black; border-radius: 10px; "      // border style
+                                 "background-color: lightgray;" // background color
+                                 "padding: 5px;"                // padding
+                                 "qproperty-iconSize: 24px 24px;" // icon size
+                                 "}"
+                                 "QPushButton:hover {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
+                                 " background-color: lightblue;" // hover background
+                                 "}"));
+    connect(store_button, &QPushButton::clicked, [this]() { emit changePage(3); });
+
+    belt_button = new QPushButton(this);
+    belt_button->setGeometry(QRect(QPoint(window_width_1/2-160,window_height_1-80), QSize(80, 80)));
+    belt_button->setIcon(vault.get_pic("belt_button"));
+    belt_button->setStyleSheet(("QPushButton {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid black; border-radius: 10px; "      // border style
+                                 "background-color: lightgray;" // background color
+                                 "padding: 5px;"                // padding
+                                 "qproperty-iconSize: 60px 60px;" // icon size
+                                 "}"
+                                 "QPushButton:hover {"
+                                "font-size: 16px;"
+                                "border: 2px solid blue;border-radius: 10px;"      // hover style
+                                " background-color: lightblue;" // hover background
+                                "}"));
+    connect(belt_button, &QPushButton::clicked, this, &game_page::handle_belt);
 
 }
 
 game_page::~game_page()
 {
-    delete store_button;
-    delete help_button;
-    delete back_button;
-    delete cutter;
-    delete miner;
-    delete rope;
-    delete trash_bin;
+    /*if (store_button != nullptr) {
+        delete store_button;
+        store_button = nullptr;
+    }
+    if (back_button != nullptr) {
+        delete back_button;
+        back_button = nullptr;
+    }
+    if (cutter != nullptr) {
+        delete cutter;
+        cutter = nullptr;
+    }
+    if (miner != nullptr) {
+        delete miner;
+        miner = nullptr;
+    }
+    if (rope != nullptr) {
+        delete rope;
+        rope = nullptr;
+    }
+    if (trash_bin != nullptr) {
+        delete trash_bin;
+        trash_bin = nullptr;
+    }*/
+
+
 }
 
 void game_page::paintEvent(QPaintEvent *event)
@@ -83,11 +149,29 @@ void game_page::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
     QPainter painter(this);
     painter.drawPixmap(0,0,width(),height(), game_background);
+    draw_belt(painter);
+    draw_mine(painter);
 }
 
-void game_page::handle_back_button()
+
+void game_page::handle_belt()
 {
-    auto * start = new Startpage(this->parentWidget());
-    start->show();
-    this->close();
+    want_place_belt=true;
+    std::cout<<"want_place_belt:"<<want_place_belt<<std::endl;
 }
+
+void game_page::mouseMoveEvent(QMouseEvent *event)
+{
+    place_belt(event);
+    delete_belt(event);
+    update();
+}
+
+void game_page::mousePressEvent(QMouseEvent *event)
+{
+
+    delete_belt(event);
+    update();
+}
+
+

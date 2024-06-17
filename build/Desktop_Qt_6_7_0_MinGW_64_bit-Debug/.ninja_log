@@ -1,0 +1,9 @@
+# ninja log v5
+3	358	7379225546545961	ShapeZ_autogen/timestamp	b9b8bb8fe49b2acd
+3	358	7379225546545961	ShapeZ_autogen/mocs_compilation.cpp	b9b8bb8fe49b2acd
+3	358	7379225546545961	D:/ShapeZ/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug/ShapeZ_autogen/timestamp	b9b8bb8fe49b2acd
+3	358	7379225546545961	D:/ShapeZ/build/Desktop_Qt_6_7_0_MinGW_64_bit-Debug/ShapeZ_autogen/mocs_compilation.cpp	b9b8bb8fe49b2acd
+359	1482	7379225558102291	CMakeFiles/ShapeZ.dir/ShapeZ_autogen/mocs_compilation.cpp.obj	bc08b62e4e4dd249
+363	1494	7379225558219187	CMakeFiles/ShapeZ.dir/main.cpp.obj	19ddb4ee70b0773
+367	1540	7379225558671078	CMakeFiles/ShapeZ.dir/mainwindow.cpp.obj	a7d0707ac7c2ff0a
+1540	1662	7379225559852109	ShapeZ.exe	7c5d71e88eebe5d4

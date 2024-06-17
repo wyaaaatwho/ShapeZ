@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QIcon>
 #include <QWidget>
+#include <QStackedWidget>
 
 
 QT_BEGIN_NAMESPACE
@@ -32,6 +33,13 @@ public:
 private:
     Ui::MainWindow *ui;
     QPushButton *button;
+    QStackedWidget *stacked_widget;
+
+private slots:
+    void setPage(int index) {
+        stacked_widget->setCurrentIndex(index);
+    }
+
 
 };
 #endif // MAINWINDOW_H
