@@ -28,7 +28,7 @@
 #define DIR_RIGHT_UP 11
 #define DIR_RIGHT_DOWN 12
 
-// 修改物品定义，避免与标准库冲突
+
 #define ITEM_BELT   1
 #define ITEM_MINER  2
 #define ITEM_BIN    3
@@ -66,18 +66,7 @@ public:
     resource_manager& operator=(const resource_manager&) = delete;
 };
 
-extern int game_state;
-extern int window_width;
-extern int window_height;
-extern int cube_size;
-extern int map[10][18][4];// [0] = item type, [1] = item level/speed, [2] = item direction, [3] = item state
-extern int mouse_x;
-extern int mouse_y;
-extern int pre_item_i;
-extern int pre_item_j;
 
-extern bool is_placing_belt;
-extern bool want_place_belt;
 
 
 

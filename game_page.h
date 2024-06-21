@@ -18,6 +18,9 @@
 #include <QDebug>
 #include <QIcon>
 #include <QWidget>
+#include <QMap>
+#include "belt.h"
+#include "item.h"
 
 
 
@@ -32,6 +35,24 @@ public:
     void paintEvent(QPaintEvent *event) override;
     void draw_belt(QPainter &painter);
     void draw_mine(QPainter &painter);
+
+
+    static QMap <int,item*> item_list;
+    static int map[16][24][4];
+    int mouse_x;
+    int mouse_y;
+    int pre_item_i;
+    int pre_item_j;
+    int item_count;
+
+
+    int game_map_width;
+    int game_map_height;
+    int cube_size;
+
+    static bool is_placing_belt;
+    static bool want_place_belt;
+
 
     signals:
         void changePage(int index);

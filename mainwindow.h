@@ -30,6 +30,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    int static game_state;
+
 private:
     Ui::MainWindow *ui;
     QPushButton *button;

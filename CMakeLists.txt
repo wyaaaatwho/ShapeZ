@@ -34,6 +34,7 @@ set(PROJECT_SOURCES
         belt.h
         mine.cpp
         mine.h
+        item.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

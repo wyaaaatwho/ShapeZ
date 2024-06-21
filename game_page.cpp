@@ -8,9 +8,14 @@
 #include "global.h"
 #include "belt.h"
 #include "mine.h"
+#include "item.h"
+
 #include <iostream>
 
 
+QMap<int, item*> game_page::map;
+bool game_page::is_placing_belt = false;
+bool game_page::want_place_belt = false;
 
 game_page::game_page(QWidget *parent):QWidget(parent)
 {
@@ -149,8 +154,10 @@ void game_page::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
     QPainter painter(this);
     painter.drawPixmap(0,0,width(),height(), game_background);
-    draw_belt(painter);
-    draw_mine(painter);
+    for (auto &i : map)
+    {
+        i->draw_item(painter); // draw every item
+    }
 }
 
 
@@ -162,9 +169,121 @@ void game_page::handle_belt()
 
 void game_page::mouseMoveEvent(QMouseEvent *event)
 {
-    place_belt(event);
-    delete_belt(event);
-    update();
+    mouse_x = event->x();
+    mouse_y = event->y();
+    if (want_place_belt) // Check if left button is pressed
+    {
+        if ((event->buttons() & Qt::LeftButton) && !is_placing_belt) {
+            is_placing_belt = true;
+            std::cout << "is_placing_belt:" << is_placing_belt << std::endl;
+        }
+        if(is_placing_belt&&(event->buttons() & Qt::LeftButton))//Check if left button is pressed
+        {
+            int current_x = event->x();
+            int current_y = event->y();
+
+            int current_i = current_y / cube_size_1;
+            int current_j = current_x / cube_size_1;
+
+            int prev_i = mouse_y / cube_size_1;
+            int prev_j = mouse_x / cube_size_1;
+
+            if (current_i != prev_i || current_j != prev_j)
+            {
+                if (current_i >= 0 && current_i < game_map_height/cube_size && current_j >= 0 && current_j < game_map_width/cube_size)
+                {
+                    if (map[current_i][current_j][0] == 0&&map[prev_i][prev_j][0]==ITEM_BELT)
+                    {
+                        map[current_i][current_j][0] = ITEM_BELT;
+                        map[current_i][current_j][3] = 0;
+                        if(map[prev_i][prev_j][2]!=0)//if the previous belt has a direction
+                        {
+                            if (current_i - 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_DOWN;
+                                if (map[prev_i][prev_j][2] == DIR_LEFT)
+                                    map[prev_i][prev_j][2] = DIR_LEFT_DOWN;
+                                else if (map[prev_i][prev_j][2] == DIR_RIGHT)
+                                    map[prev_i][prev_j][2] = DIR_RIGHT_DOWN;
+                            }
+                            else if (current_i + 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_UP;
+                                if (map[prev_i][prev_j][2] == DIR_LEFT)
+                                    map[prev_i][prev_j][2] = DIR_LEFT_UP;
+                                else if (map[prev_i][prev_j][2] == DIR_RIGHT)
+                                    map[prev_i][prev_j][2] = DIR_RIGHT_UP;
+                            }
+                            else if (current_i == prev_i && current_j - 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_RIGHT;
+                                if (map[prev_i][prev_j][2] == DIR_UP)
+                                    map[prev_i][prev_j][2] = DIR_UP_RIGHT;
+                                else if (map[prev_i][prev_j][2] == DIR_DOWN)
+                                    map[prev_i][prev_j][2] = DIR_DOWN_RIGHT;
+                            }
+                            else if (current_i == prev_i && current_j + 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_LEFT;
+                                if (map[prev_i][prev_j][2] == DIR_UP)
+                                    map[prev_i][prev_j][2] = DIR_UP_LEFT;
+                                else if (map[prev_i][prev_j][2] == DIR_DOWN)
+                                    map[prev_i][prev_j][2] = DIR_DOWN_LEFT;
+                            }
+                        }
+                        else if(map[prev_i][prev_j][2]==0)//if the previous belt has no direction
+                        {
+                            if (current_i - 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_DOWN;
+                                map[prev_i][prev_j][2] = DIR_DOWN;
+                            }
+                            else if (current_i + 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_UP;
+                                map[prev_i][prev_j][2] = DIR_UP;
+                            }
+                            else if (current_i == prev_i && current_j - 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_RIGHT;
+                                map[prev_i][prev_j][2] = DIR_RIGHT;
+                            }
+                            else if (current_i == prev_i && current_j + 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_LEFT;
+                                map[prev_i][prev_j][2] = DIR_LEFT;
+                            }
+                        }
+                    }
+                    else if(map[current_i][current_j][0] == 0&&map[prev_i][prev_j][0]!=ITEM_BELT)// if the current position is empty and the previous position is empty
+                    {
+                        map[current_i][current_j][0] = ITEM_BELT;
+                        map[current_i][current_j][3] = 0;//set the current position to belt
+                    }
+                    else if(map[current_i][current_j][0] == ITEM_BELT) // if current has, call it back
+                    {
+                        map[pre_item_i][pre_item_j][0]=0;
+                        map[pre_item_i][pre_item_j][3]=0;
+                    }
+                }
+                mouse_x = current_x;
+                mouse_y = current_y;
+                pre_item_i = current_i;
+                pre_item_j = current_j;
+            }
+
+            std::cout<<"is :"<<is_placing_belt<<std::endl;
+            std::cout<<"want: "<<want_place_belt<<std::endl;
+        }
+        else if(is_placing_belt&&!(event->buttons() & Qt::LeftButton))
+        {
+            is_placing_belt=false;
+
+            std::cout<<"is :"<<is_placing_belt<<std::endl;
+            std::cout<<"want: "<<want_place_belt<<std::endl;
+        }
+
+    }
 }
 
 void game_page::mousePressEvent(QMouseEvent *event)

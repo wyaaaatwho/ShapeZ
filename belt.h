@@ -20,6 +20,15 @@
 #include <QIcon>
 #include <QWidget>
 #include <iostream>
+#include "item.h"
 
-void place_belt(QMouseEvent *event);
-void delete_belt(QMouseEvent *event);
+class belt :public item
+{
+    belt(int i,int j,int direction);
+    ~belt();
+    void draw_item(QPainter &painter);
+    void place_item(QMouseEvent *event);
+    void delete_item(QMouseEvent *event);
+    void upgrade_item();
+};
+
