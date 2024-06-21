@@ -4,8 +4,6 @@
 
 #ifndef SHAPEZ_BELT_H
 #define SHAPEZ_BELT_H
-
-#endif //SHAPEZ_BELT_H
 #include <QApplication>
 #include <QMainWindow>
 #include <QPixmap>
@@ -24,11 +22,19 @@
 
 class belt :public item
 {
-    belt(int i,int j,int direction);
-    ~belt();
-    void draw_item(QPainter &painter);
-    void place_item(QMouseEvent *event);
-    void delete_item(QMouseEvent *event);
-    void upgrade_item();
+public:
+    belt(int i,int j,int direction,int level,int speed,QPixmap belt_pix);
+    ~belt() override;
+    void draw_item(QPainter &painter) override;
+    //void place_item(QMouseEvent *event);
+    //void delete_item(QMouseEvent *event);
+    //void upgrade_item();
+
+    bool paint_flag = false;
+    QPixmap belt_pix;
 };
+
+
+#endif //SHAPEZ_BELT_H
+
 

@@ -19,7 +19,7 @@
 #include <QIcon>
 #include <QWidget>
 #include <QMap>
-#include "belt.h"
+
 #include "item.h"
 
 
@@ -33,12 +33,12 @@ public:
     ~game_page();
 
     void paintEvent(QPaintEvent *event) override;
-    void draw_belt(QPainter &painter);
+    //void draw_belt(QPainter &painter);
     void draw_mine(QPainter &painter);
 
 
-    static QMap <int,item*> item_list;
-    static int map[16][24][4];
+    static QMap <std::pair<int,int>,item*> item_list;
+    static int map[16][24][4]; // 0: item type 1: item level 2: item direction 3: item paint_flag
     int mouse_x;
     int mouse_y;
     int pre_item_i;

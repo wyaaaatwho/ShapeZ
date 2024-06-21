@@ -23,14 +23,13 @@ public :
     int level;
     int speed;
 
-    item(int i,int j,int type,int direction,int level,int speed);
-    ~item();
-
-
     virtual void draw_item(QPainter &painter)=0;
-    virtual void place_item(QMouseEvent *event)=0;
-    virtual void delete_item(QMouseEvent *event)=0;
-    virtual void upgrade_item()=0;
+    //virtual void place_item(QMouseEvent *event)=0;
+    //virtual void delete_item(QMouseEvent *event)=0;
+    //virtual void upgrade_item()=0;
+
+    virtual ~item() = default;
+
 };
 
 
