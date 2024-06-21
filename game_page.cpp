@@ -6,8 +6,16 @@
 #include "help_page.h"
 #include "start_page.h"
 #include "global.h"
+#include "belt.h"
+#include "mine.h"
+#include "item.h"
+
+#include <iostream>
 
 
+QMap<int, item*> game_page::map;
+bool game_page::is_placing_belt = false;
+bool game_page::want_place_belt = false;
 
 game_page::game_page(QWidget *parent):QWidget(parent)
 {
@@ -16,6 +24,16 @@ game_page::game_page(QWidget *parent):QWidget(parent)
     setFixedSize(window_width_1,window_height_1);
     setWindowTitle("Shapez");
     game_background=vault.get_pic("game_background");
+
+    setMouseTracking(true); // start tracking mouse
+
+    timer = new QTimer(reinterpret_cast<QObject *>(this));
+    connect(timer, &QTimer::timeout, this, QOverload<>::of(&game_page::update));
+    timer->start(16); // 每秒大约60帧，16ms刷新一次（1000ms / 60帧）
+
+    // Initialize the mine
+    mine  mine_1(vault.instance().get_pic("mine_1"));
+
 
     /*store_button=new QPushButton(this);
     store_button->setGeometry(0,0,100,50);
@@ -50,32 +68,85 @@ game_page::game_page(QWidget *parent):QWidget(parent)
 
     back_button = new QPushButton("Back", this);
     back_button->setGeometry(QRect(QPoint(0,0), QSize(80, 80)));
+    back_button->setIcon(vault.get_pic("back_button"));
     back_button->setStyleSheet(("QPushButton {"
-                                "font-size: 20px;"
+                                "font-size: 16px;"
                                 "border: 2px solid black; border-radius: 10px; "      // border style
                                 "background-color: lightgray;" // background color
                                 "padding: 5px;"                // padding
                                 "qproperty-iconSize: 24px 24px;" // icon size
                                 "}"
                                 "QPushButton:hover {"
-                                "font-size: 20px;"
+                                "font-size: 16px;"
                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
                                 " background-color: lightblue;" // hover background
                                 "}"));
-    connect(back_button, SIGNAL(clicked()), this, SLOT(handle_back_button()));
+    connect(back_button, &QPushButton::clicked, [this]() { emit changePage(0); });
 
+    store_button = new QPushButton("Store", this);
+    store_button->setGeometry(QRect(QPoint(0,80), QSize(80, 80)));
+    store_button->setIcon(vault.get_pic("store_button"));
+    store_button->setStyleSheet(("QPushButton {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid black; border-radius: 10px; "      // border style
+                                 "background-color: lightgray;" // background color
+                                 "padding: 5px;"                // padding
+                                 "qproperty-iconSize: 24px 24px;" // icon size
+                                 "}"
+                                 "QPushButton:hover {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
+                                 " background-color: lightblue;" // hover background
+                                 "}"));
+    connect(store_button, &QPushButton::clicked, [this]() { emit changePage(3); });
+
+    belt_button = new QPushButton(this);
+    belt_button->setGeometry(QRect(QPoint(window_width_1/2-160,window_height_1-80), QSize(80, 80)));
+    belt_button->setIcon(vault.get_pic("belt_button"));
+    belt_button->setStyleSheet(("QPushButton {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid black; border-radius: 10px; "      // border style
+                                 "background-color: lightgray;" // background color
+                                 "padding: 5px;"                // padding
+                                 "qproperty-iconSize: 60px 60px;" // icon size
+                                 "}"
+                                 "QPushButton:hover {"
+                                "font-size: 16px;"
+                                "border: 2px solid blue;border-radius: 10px;"      // hover style
+                                " background-color: lightblue;" // hover background
+                                "}"));
+    connect(belt_button, &QPushButton::clicked, this, &game_page::handle_belt);
 
 }
 
 game_page::~game_page()
 {
-    delete store_button;
-    delete help_button;
-    delete back_button;
-    delete cutter;
-    delete miner;
-    delete rope;
-    delete trash_bin;
+    /*if (store_button != nullptr) {
+        delete store_button;
+        store_button = nullptr;
+    }
+    if (back_button != nullptr) {
+        delete back_button;
+        back_button = nullptr;
+    }
+    if (cutter != nullptr) {
+        delete cutter;
+        cutter = nullptr;
+    }
+    if (miner != nullptr) {
+        delete miner;
+        miner = nullptr;
+    }
+    if (rope != nullptr) {
+        delete rope;
+        rope = nullptr;
+    }
+    if (trash_bin != nullptr) {
+        delete trash_bin;
+        trash_bin = nullptr;
+    }*/
+
+
 }
 
 void game_page::paintEvent(QPaintEvent *event)
@@ -83,11 +154,143 @@ void game_page::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
     QPainter painter(this);
     painter.drawPixmap(0,0,width(),height(), game_background);
+    for (auto &i : map)
+    {
+        i->draw_item(painter); // draw every item
+    }
 }
 
-void game_page::handle_back_button()
+
+void game_page::handle_belt()
 {
-    auto * start = new Startpage(this->parentWidget());
-    start->show();
-    this->close();
+    want_place_belt=true;
+    std::cout<<"want_place_belt:"<<want_place_belt<<std::endl;
 }
+
+void game_page::mouseMoveEvent(QMouseEvent *event)
+{
+    mouse_x = event->x();
+    mouse_y = event->y();
+    if (want_place_belt) // Check if left button is pressed
+    {
+        if ((event->buttons() & Qt::LeftButton) && !is_placing_belt) {
+            is_placing_belt = true;
+            std::cout << "is_placing_belt:" << is_placing_belt << std::endl;
+        }
+        if(is_placing_belt&&(event->buttons() & Qt::LeftButton))//Check if left button is pressed
+        {
+            int current_x = event->x();
+            int current_y = event->y();
+
+            int current_i = current_y / cube_size_1;
+            int current_j = current_x / cube_size_1;
+
+            int prev_i = mouse_y / cube_size_1;
+            int prev_j = mouse_x / cube_size_1;
+
+            if (current_i != prev_i || current_j != prev_j)
+            {
+                if (current_i >= 0 && current_i < game_map_height/cube_size && current_j >= 0 && current_j < game_map_width/cube_size)
+                {
+                    if (map[current_i][current_j][0] == 0&&map[prev_i][prev_j][0]==ITEM_BELT)
+                    {
+                        map[current_i][current_j][0] = ITEM_BELT;
+                        map[current_i][current_j][3] = 0;
+                        if(map[prev_i][prev_j][2]!=0)//if the previous belt has a direction
+                        {
+                            if (current_i - 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_DOWN;
+                                if (map[prev_i][prev_j][2] == DIR_LEFT)
+                                    map[prev_i][prev_j][2] = DIR_LEFT_DOWN;
+                                else if (map[prev_i][prev_j][2] == DIR_RIGHT)
+                                    map[prev_i][prev_j][2] = DIR_RIGHT_DOWN;
+                            }
+                            else if (current_i + 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_UP;
+                                if (map[prev_i][prev_j][2] == DIR_LEFT)
+                                    map[prev_i][prev_j][2] = DIR_LEFT_UP;
+                                else if (map[prev_i][prev_j][2] == DIR_RIGHT)
+                                    map[prev_i][prev_j][2] = DIR_RIGHT_UP;
+                            }
+                            else if (current_i == prev_i && current_j - 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_RIGHT;
+                                if (map[prev_i][prev_j][2] == DIR_UP)
+                                    map[prev_i][prev_j][2] = DIR_UP_RIGHT;
+                                else if (map[prev_i][prev_j][2] == DIR_DOWN)
+                                    map[prev_i][prev_j][2] = DIR_DOWN_RIGHT;
+                            }
+                            else if (current_i == prev_i && current_j + 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_LEFT;
+                                if (map[prev_i][prev_j][2] == DIR_UP)
+                                    map[prev_i][prev_j][2] = DIR_UP_LEFT;
+                                else if (map[prev_i][prev_j][2] == DIR_DOWN)
+                                    map[prev_i][prev_j][2] = DIR_DOWN_LEFT;
+                            }
+                        }
+                        else if(map[prev_i][prev_j][2]==0)//if the previous belt has no direction
+                        {
+                            if (current_i - 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_DOWN;
+                                map[prev_i][prev_j][2] = DIR_DOWN;
+                            }
+                            else if (current_i + 1 == prev_i && current_j == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_UP;
+                                map[prev_i][prev_j][2] = DIR_UP;
+                            }
+                            else if (current_i == prev_i && current_j - 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_RIGHT;
+                                map[prev_i][prev_j][2] = DIR_RIGHT;
+                            }
+                            else if (current_i == prev_i && current_j + 1 == prev_j)
+                            {
+                                map[current_i][current_j][2] = DIR_LEFT;
+                                map[prev_i][prev_j][2] = DIR_LEFT;
+                            }
+                        }
+                    }
+                    else if(map[current_i][current_j][0] == 0&&map[prev_i][prev_j][0]!=ITEM_BELT)// if the current position is empty and the previous position is empty
+                    {
+                        map[current_i][current_j][0] = ITEM_BELT;
+                        map[current_i][current_j][3] = 0;//set the current position to belt
+                    }
+                    else if(map[current_i][current_j][0] == ITEM_BELT) // if current has, call it back
+                    {
+                        map[pre_item_i][pre_item_j][0]=0;
+                        map[pre_item_i][pre_item_j][3]=0;
+                    }
+                }
+                mouse_x = current_x;
+                mouse_y = current_y;
+                pre_item_i = current_i;
+                pre_item_j = current_j;
+            }
+
+            std::cout<<"is :"<<is_placing_belt<<std::endl;
+            std::cout<<"want: "<<want_place_belt<<std::endl;
+        }
+        else if(is_placing_belt&&!(event->buttons() & Qt::LeftButton))
+        {
+            is_placing_belt=false;
+
+            std::cout<<"is :"<<is_placing_belt<<std::endl;
+            std::cout<<"want: "<<want_place_belt<<std::endl;
+        }
+
+    }
+}
+
+void game_page::mousePressEvent(QMouseEvent *event)
+{
+
+    delete_belt(event);
+    update();
+}
+
+

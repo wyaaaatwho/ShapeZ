@@ -24,9 +24,9 @@ Startpage::Startpage(QWidget* parent):QWidget(parent)
     start_button->setFixedSize(start_button_icon.size());
     start_button->setGeometry((window_width_1-start_button_icon.width())/2, (window_height_1-start_button_icon.height())/2, start_button_icon.width(), start_button_icon.height());
 
-    connect(start_button, SIGNAL(clicked()), this, SLOT(handle_start_button()));
+    connect(start_button, SIGNAL(clicked()), this, SLOT(emit changePage(1)));
     connect(start_button, SIGNAL(toggled()), this, SLOT(on_start_button()));
-    connect(start_button, SIGNAL(leaveEvent()), this, SLOT(leave_start_button()));
+    connect(start_button, &QPushButton::clicked, [this]() { emit changePage(1); });
     //set border free
     start_button->setStyleSheet("QPushButton { border: none; }");
     auto *iconSwitcher = new IconSwitcher(start_button, start_button_icon, start_button_on_icon);
@@ -49,7 +49,7 @@ Startpage::Startpage(QWidget* parent):QWidget(parent)
                                    " background-color: lightblue;" // hover background
                                    "}");
     //connect(continue_button, SIGNAL(clicked()), this, SLOT(load_game()));
-   
+
     exit_button = new QPushButton("Exit", this);
     QPixmap exit_button_icon = vault.get_pic("exit_button");
     exit_button->setIcon(QIcon(exit_button_icon));
@@ -67,7 +67,7 @@ Startpage::Startpage(QWidget* parent):QWidget(parent)
                                 " background-color: lightblue;" // hover background
                                 "}"));
     connect(exit_button, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
-    
+
     help_button = new QPushButton("Help", this);
     QPixmap help_button_icon = vault.get_pic("help_button");
     help_button->setIcon(QIcon(help_button_icon));
@@ -84,17 +84,22 @@ Startpage::Startpage(QWidget* parent):QWidget(parent)
                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
                                 " background-color: lightblue;" // hover background
                                 "}"));
-    connect(help_button, SIGNAL(clicked()), this, SLOT(handle_help_button()));
+    connect(help_button, &QPushButton::clicked, [this]() { emit changePage(2); });
 
 
 }
 
 Startpage::~Startpage()
 {
-    delete start_button;
-    delete continue_button;
-    delete exit_button;
-    delete help_button;
+    /*if(start_button!=nullptr)
+        delete start_button;
+    if(continue_button!=nullptr)
+        delete continue_button;
+    if(exit_button!=nullptr)
+        delete exit_button;
+    if(help_button!=nullptr)
+        delete help_button;*/
+
 }
 
 //draw the start page
@@ -105,12 +110,6 @@ void Startpage::paintEvent(QPaintEvent *event)
     painter.drawPixmap(0,0,width(),height(), start_page_pic);
 }
 
-void Startpage::handle_start_button()
-{
-    auto *game = new game_page(this->parentWidget());
-    this->close();
-    game->show();
-}
 
 void Startpage::on_start_button()
 {
@@ -122,9 +121,3 @@ void Startpage::leave_start_button()
     start_button->setIcon(QIcon(QPixmap(":/start_button_on.png")));
 }
 
-void Startpage::handle_help_button()
-{
-    auto *help = new help_page(this->parentWidget());
-    this->close();
-    help->show();
-}

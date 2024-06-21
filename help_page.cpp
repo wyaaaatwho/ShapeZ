@@ -29,25 +29,25 @@ help_page::help_page(QWidget *parent):QWidget(parent)
                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
                                 " background-color: lightblue;" // hover background
                                 "}"));
-    connect(back_button, SIGNAL(clicked()), this, SLOT(handle_back_button()));
+    connect(back_button, &QPushButton::clicked,[this](){emit changePage(0);});
 
     help_text = new QTextEdit(this);
     help_text->setGeometry(QRect(QPoint(window_width_1/2-500, ((window_height_1/2)-240)), QSize(1000, 400)));
     help_text->setStyleSheet(("QTextEdit {"
-                             "font-size: 20px;"
-                             "border: 2px solid black; border-radius: 10px; "      // border style
-                             "background-color: lightgray;" // background color
-                             "padding: 5px;"                // padding
-                             "}"));
+                              "font-size: 20px;"
+                              "border: 2px solid black; border-radius: 10px; "      // border style
+                              "background-color: lightgray;" // background color
+                              "padding: 5px;"                // padding
+                              "}"));
 
     // using html to format the text: Hail to the Front-End!
     QString text = "<div style='text-align: center;'>"
                    "<h1 style='font-size: 24px; font-weight: bold;'>关于本作</h1>"
                    "</div>"
-                   "<p>这里是shapez，一个来自wyaaaattwho的异形工厂</p>"
+                   "<p>这里是shapez，一个来自wyaaaattwho😎的异形工厂</p>"
                    "<p><strong>基本操作:</strong></p>"
                    "<ul>"
-                   "<li>使用键盘W A S D控制建筑方向，鼠标右键撤销已放置的建筑。</li>"
+                   "<li>使用键盘W A S D控制建筑方向，鼠标右键撤销已放置的建筑。（单击或者滑动擦除都可以哦😍）</li>"
                    "</ul>"
                    "<p><strong>共有四种建筑：</strong></p>"
                    "<ul>"
@@ -66,17 +66,18 @@ help_page::help_page(QWidget *parent):QWidget(parent)
     help_text->setHtml(text);
 }
 
-void help_page::handle_back_button()
-{
-    auto * start = new Startpage(this->parentWidget());
-    start->show();
-    this->close();
-}
+
 
 help_page::~help_page()
 {
-    delete back_button;
-    delete help_text;
+    /*if (back_button != nullptr) {
+        delete back_button;
+        back_button = nullptr;
+    }
+    if (help_text != nullptr) {
+        delete help_text;
+        help_text = nullptr;
+    }*/
 }
 
 void help_page::paintEvent(QPaintEvent *event)

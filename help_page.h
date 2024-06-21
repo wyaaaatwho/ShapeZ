@@ -28,11 +28,11 @@ public:
     help_page(QWidget *parent=nullptr);
     ~help_page();
 
+
     void paintEvent(QPaintEvent *event) override;
 
-
-private slots:
-    void handle_back_button();
+signals:
+    void changePage(int index);
 private:
     QPushButton *back_button;
     QPixmap help_page_pic;
