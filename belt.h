@@ -26,12 +26,17 @@ public:
     belt(int i,int j,int direction,int level,int speed,QPixmap belt_pix);
     ~belt() override;
     void draw_item(QPainter &painter) override;
+
+    void detect_cargo_stopped();
     //void place_item(QMouseEvent *event);
     //void delete_item(QMouseEvent *event);
     //void upgrade_item();
 
-    bool paint_flag = false;
+    int static belt_speed;
+
+
     QPixmap belt_pix;
+    static QTimer belt_timer;
 };
 
 

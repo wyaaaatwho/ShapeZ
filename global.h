@@ -11,10 +11,12 @@
 #define window_width_1 1440
 #define window_height_1 800
 #define cube_size_1 80
+#define CARGO_SIZE 60
 #define stopped 0
 #define started 1
 #define paused 2
 #define game_over 3
+
 #define DIR_UP    1
 #define DIR_LEFT  2
 #define DIR_DOWN  3
@@ -31,10 +33,21 @@
 
 #define ITEM_BELT   1
 #define ITEM_MINER  2
-#define ITEM_BIN    3
+#define ITEM_TRASH_BIN    3
 #define ITEM_CUTTER 4
 #define ITEM_HUB 5
 #define ITEM_MINE 6
+#define ITEM_MINERANDMINE 7
+
+
+#define CARGO_STOPPED 0
+#define CARGO_MOVING 1
+#define CIRCLE 0
+#define SQUARE 1
+# define LEFT_HALF_CIRCLE 2
+# define RIGHT_HALF_CIRCLE 3
+
+
 #include <QHash>
 #include <QPixmap>
 #include <QWidget>

@@ -35,6 +35,16 @@ set(PROJECT_SOURCES
         mine.cpp
         mine.h
         item.h
+        miner.cpp
+        miner.h
+        trash_bin.cpp
+        trash_bin.h
+        cutter.cpp
+        cutter.h
+        hub.cpp
+        hub.h
+        cargo.cpp
+        cargo.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

@@ -20,16 +20,22 @@
 #include <QWidget>
 #include <iostream>
 
+#include <string>
+
+
 class mine
 {
 public:
-    mine(QPixmap pic);
+    mine(QPixmap pic,std::string name,int i,int j);
     ~mine();
     void upgrade_mine();
-    void initialize_mine();
-
+    void draw_mine(QPainter &painter);
 
     QPixmap mine_pic;
+    std::string mine_name;
+    int i;
+    int j;
+
 
 };
 

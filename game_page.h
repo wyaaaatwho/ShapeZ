@@ -21,8 +21,10 @@
 #include <QMap>
 
 #include "item.h"
-
-
+#include "mine.h"
+#include "global.h"
+#include "miner.h"
+#include"cargo.h"
 
 
 class game_page :public QWidget
@@ -37,7 +39,10 @@ public:
     void draw_mine(QPainter &painter);
 
 
-    static QMap <std::pair<int,int>,item*> item_list;
+    static QMap <std::pair<int,int>,item*>item_list;
+    static QMap <std::pair<int,int>,mine*>mine_list;
+    static QMap <int,cargo*>cargo_list;
+
     static int map[16][24][4]; // 0: item type 1: item level 2: item direction 3: item paint_flag
     int mouse_x;
     int mouse_y;
@@ -53,27 +58,53 @@ public:
     static bool is_placing_belt;
     static bool want_place_belt;
 
+    static bool is_placing_miner;
+    static bool is_placing_cutter;
+    static bool is_placing_trash_bin;
+
+    static item *item_to_place;
+
 
     signals:
         void changePage(int index);
 
+
 public slots:
         void handle_belt();
+        void handle_miner();
+        void handle_cutter();
+        void handle_trash_bin();
+        void emit_signals();
 
 protected:
     //void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
+
+
+    void delete_item(QMouseEvent *event);
+
+    void set_buttons();
+    void set_belt();void placeBelt(QMouseEvent *event);void draw_belt_blue(QPainter &painter);
+    void set_mine(); //set two mines
+    void set_hub();
+
+    //place an item
+    void place_item(QMouseEvent *event);
+    void rotate_item(QKeyEvent *event);
+    void set_item(QMouseEvent *event);
 
 
 
 private:
     QPushButton *store_button;
     QPushButton *back_button;
-    QPushButton *cutter;
-    QPushButton *miner;
+    QPushButton *cutter_button;
+    QPushButton *miner_button;
     QPushButton *belt_button;
-    QPushButton *trash_bin;
+    QPushButton *trash_bin_button;
     QPixmap game_background;
     QPixmap cutter_pic;
     QPixmap miner_pic;
@@ -81,7 +112,6 @@ private:
     QPixmap trash_bin_pic;
     QTimer *timer;
 
-    void mousePressEvent(QMouseEvent *event);
 };
 
 

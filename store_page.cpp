@@ -52,7 +52,7 @@ store_page::store_page(QWidget *parent):QWidget(parent)
                                 "}"));
     connect(expand_map, SIGNAL(clicked()), this, SLOT(handle_expand_map()));
 
-    clear_barriers = new QPushButton("Clear Barriers", this);
+    clear_barriers = new QPushButton("Speed Up", this);
     clear_barriers->setIcon(vault.get_pic("clear_barriers"));
     clear_barriers->setGeometry(QRect(QPoint(window_width_1/2-400, (window_height_1/2)-100), QSize(200, 200)));
     clear_barriers->setStyleSheet(("QPushButton {"
@@ -87,7 +87,7 @@ store_page::store_page(QWidget *parent):QWidget(parent)
     connect(increase_mine, SIGNAL(clicked()), this, SLOT(handle_increase_mine()));
 
     hub_big = new QPushButton("Bigger Hub", this);
-    hub_big->setIcon(vault.get_pic("hub_big"));
+    hub_big->setIcon(vault.get_pic("big_hub"));
     hub_big->setGeometry(QRect(QPoint(window_width_1/2+200, (window_height_1/2-100)), QSize(200, 200)));
     hub_big->setStyleSheet(("QPushButton {"
                                 "font-size: 20px;"
