@@ -32,8 +32,9 @@ public:
     //void upgrade_hub();
     void finish_task();
 
-    public slots:
-        static void cargo_get_in(int type);
+   // void move_cargo() override;
+
+   void move_cargo() override;
 
 
     int size;
@@ -45,8 +46,10 @@ public:
     static int task2_type;
 
     static int coins;
+    static int coin_value ;// coins value
 
     static bool task_finished;
+
 
     QPixmap hub_pic;
 
@@ -58,6 +61,9 @@ public:
     QPixmap mineral_icon2;
 
     int game_level;
+
+public slots:
+    void get_cargo(int type);
 };
 
 

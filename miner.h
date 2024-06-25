@@ -31,6 +31,8 @@ public:
 
     void generate_cargo();
 
+    void move_cargo() override;
+
     bool start_mining;
     int interval;
     QPixmap miner_pic;

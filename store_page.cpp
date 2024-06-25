@@ -87,7 +87,7 @@ store_page::store_page(QWidget *parent):QWidget(parent)
     connect(increase_mine, SIGNAL(clicked()), this, SLOT(handle_increase_mine()));
 
     hub_big = new QPushButton("Bigger Hub", this);
-    hub_big->setIcon(vault.get_pic("big_hub"));
+    hub_big->setIcon(vault.get_pic("hub_big"));
     hub_big->setGeometry(QRect(QPoint(window_width_1/2+200, (window_height_1/2-100)), QSize(200, 200)));
     hub_big->setStyleSheet(("QPushButton {"
                                 "font-size: 20px;"

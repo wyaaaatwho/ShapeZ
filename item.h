@@ -28,19 +28,20 @@ public :
     cargo * cargo_in ;
     cargo * cargo_out ;
 
+    int in_i;
+    int in_j;
+    int out_i;
+    int out_j;
+
 
     virtual void draw_item(QPainter &painter)=0;
-    //virtual void place_item(QMouseEvent *event)=0;
-    //virtual void delete_item(QMouseEvent *event)=0;
-    //virtual void upgrade_item()=0;
-
-    //virtual void get_mine_in() =0;
-    //virtual void get_mine_out() =0;
 
     item(int i,int j,int direction,int level,int speed)
             : i(i), j(j), direction(direction), level(level), speed(speed) {}
 
     virtual ~item() = default;
+
+    virtual void move_cargo() = 0;
 
 
 

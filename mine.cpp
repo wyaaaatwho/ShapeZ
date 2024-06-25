@@ -65,21 +65,21 @@ void game_page::draw_mine(QPainter &painter)
 void game_page::set_mine()
 {
     //set mine 1
+    map[6][2][0]=ITEM_MINE;
+    map[6][3][0]=ITEM_MINE;
     map[7][2][0]=ITEM_MINE;
     map[7][3][0]=ITEM_MINE;
-    map[8][2][0]=ITEM_MINE;
-    map[8][3][0]=ITEM_MINE;
-    map[8][4][0]=ITEM_MINE;
-    mine *mine_1=new mine(resource_manager::instance().get_pic("mine_1"),"circle",7,2);
-    mine_list[std::make_pair(7,2)]=mine_1;
-    mine *mine_2=new mine(resource_manager::instance().get_pic("mine_1"),"circle",7,3);
-    mine_list[std::make_pair(7,3)]=mine_2;
-    mine *mine_3=new mine(resource_manager::instance().get_pic("mine_1"),"circle",8,2);
-    mine_list[std::make_pair(8,2)]=mine_3;
-    mine *mine_4=new mine(resource_manager::instance().get_pic("mine_1"),"circle",8,3);
-    mine_list[std::make_pair(8,3)]=mine_4;
-    mine *mine_5=new mine(resource_manager::instance().get_pic("mine_1"),"circle",8,4);
-    mine_list[std::make_pair(8,4)]=mine_5;
+    map[7][4][0]=ITEM_MINE;
+    mine *mine_1=new mine(resource_manager::instance().get_pic("mine_1"),"circle",6,2);
+    mine_list[std::make_pair(6,2)]=mine_1;
+    mine *mine_2=new mine(resource_manager::instance().get_pic("mine_1"),"circle",6,3);
+    mine_list[std::make_pair(6,3)]=mine_2;
+    mine *mine_3=new mine(resource_manager::instance().get_pic("mine_1"),"circle",7,2);
+    mine_list[std::make_pair(7,2)]=mine_3;
+    mine *mine_4=new mine(resource_manager::instance().get_pic("mine_1"),"circle",7,3);
+    mine_list[std::make_pair(7,3)]=mine_4;
+    mine *mine_5=new mine(resource_manager::instance().get_pic("mine_1"),"circle",7,4);
+    mine_list[std::make_pair(7,4)]=mine_5;
 
     //set mine 2
     map[2][15][0]=ITEM_MINE;

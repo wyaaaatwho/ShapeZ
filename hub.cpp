@@ -13,10 +13,12 @@ int hub::task2_progress;
 int hub::task1_type;
 int hub::task2_type;
 int hub::coins;
+int hub::coin_value;
 bool hub::task_finished;
 
 hub::hub(int i,int j,int direction,int level,int speed,QPixmap hub_pic):item(i,j,direction,level,speed),hub_pic(hub_pic)
 {
+    type = ITEM_HUB;
     size=2;
     game_level=1;
     task_finished=false;
@@ -37,7 +39,6 @@ void hub::draw_item(QPainter &painter)
         hub_pic = QPixmap("resource/hub_big.png");
         painter.drawPixmap(j*cube_size_1,i*cube_size_1,cube_size_1*size,cube_size_1*size,hub_pic);
     }
-
 
 
     // paint task
@@ -105,19 +106,22 @@ void hub:: finish_task()
     }
 }
 
-void hub::cargo_get_in(int type)
+void hub:: move_cargo(){} //void ,hub don't need to move cargo
+
+void hub::get_cargo(int type)
 {
-    if(type == task1_type)
+    if(type==task1_type)
     {
         task1_progress++;
     }
-    else if(type == task2_type)
+    else if(type==task2_type)
     {
         task2_progress++;
     }
     else
     {
-        coins++;
+        coins+= coin_value;
     }
 }
+
 

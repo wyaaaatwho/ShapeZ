@@ -24,12 +24,23 @@
 class cutter : public item
 {
 public:
-    int out1_i;int out2_i;int out1_j;int out2_j;
+    int out1_i;int out2_i;int out1_j;int out2_j; // i,j of prev and next block
+    int i_offset;int j_offset; // another part's i,j
     cutter(int i,int j,int direction,int level,int speed,QPixmap cutter_pic);
     ~cutter() override;
     void draw_item(QPainter &painter) override;
+    void move_cargo() override;
+
+    cargo *cargo_out2;
 
     QPixmap cutter_pic;
+
+    static QTimer cutter_timer;
+
+    bool free_to_use;
+
+    bool out_1_ready;
+    bool out_2_ready;
 };
 
 

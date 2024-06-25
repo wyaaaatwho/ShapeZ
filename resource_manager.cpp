@@ -18,7 +18,7 @@ resource_manager::resource_manager()
     my_resources["clear_barriers"]=QPixmap("resource/clear_barriers.png");
     my_resources["expand_map"]=QPixmap("resource/expand_map.png");
     my_resources["store_button"]=QPixmap("resource/store_button.png");
-    my_resources["big_hub"]=QPixmap("resource/big_hub.png");
+    my_resources["hub_big"]=QPixmap("resource/hub_big.png");
     my_resources["hub"]=QPixmap("resource/hub.png");
     my_resources["increase_mine"]=QPixmap("resource/increase_mine.png");
     my_resources["money"]=QPixmap("resource/money.png");

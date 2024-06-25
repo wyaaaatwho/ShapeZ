@@ -28,12 +28,11 @@ public:
     cargo(int x, int y, int type, int speed, int direction, int state,QPixmap& cargo_pic);
     ~cargo();
     void move();
-    void detect();
+    //void detect();
     void draw(QPainter &painter);
 
     signals:
-        void cargo_into_hub(int type);
-
+    void cargo_into_hub(int type);
 
 public:
     double x ;

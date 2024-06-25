@@ -28,7 +28,10 @@ public:
     ~trash_bin() override;
     void draw_item(QPainter &painter) override;
 
+    void move_cargo() override;
+
     QPixmap trash_bin_pic;
+    static QTimer trash_bin_timer;
 };
 
 

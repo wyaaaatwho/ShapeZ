@@ -74,7 +74,6 @@ public slots:
         void handle_miner();
         void handle_cutter();
         void handle_trash_bin();
-        void emit_signals();
 
 protected:
     //void mousePressEvent(QMouseEvent *event) override;

@@ -41,7 +41,7 @@ game_page::game_page(QWidget *parent):QWidget(parent)
 
     timer = new QTimer(reinterpret_cast<QObject *>(this));
     connect(timer, &QTimer::timeout, this, QOverload<>::of(&game_page::update));
-    connect(timer, &QTimer::timeout, this, &game_page::emit_signals);
+    //connect(timer, &QTimer::timeout, this, &game_page::emit_signals);
     timer->start(16); // 60 fps
 
     // Initialize the mine
@@ -135,71 +135,6 @@ void game_page::handle_trash_bin()
     std::cout<<"is_placing_trash_bin:"<<is_placing_trash_bin<<std::endl;
 }
 
-// emit signals to start to mine
-void game_page::emit_signals()
-{
-    for(auto i:item_list)
-    {
-        if(i->type==ITEM_MINER)
-        {
-            miner *miner1 = dynamic_cast<miner*>(i);
-            if(miner1->start_mining==false)
-            {
-                if(miner1->direction==DIR_UP&&map[miner1->i/ cube_size_1-1][miner1->j/ cube_size_1][0]==ITEM_BELT&&
-                map[miner1->i/ cube_size_1-1][miner1->j/ cube_size_1][3]==1&&
-                (map[miner1->i/ cube_size_1-1][miner1->j/ cube_size_1][2]==DIR_UP
-                ||map[miner1->i/ cube_size_1-1][miner1->j/ cube_size_1][2]==DIR_UP_RIGHT||
-                map[miner1->i/ cube_size_1-1][miner1->j/ cube_size_1][2]==DIR_UP_LEFT))
-                {
-                    miner1->start_mining_slot();
-                }
-                else if (miner1->direction==DIR_RIGHT&&map[miner1->i/ cube_size_1][miner1->j/ cube_size_1+1][0]==ITEM_BELT
-                    &&map[miner1->i/ cube_size_1][miner1->j/ cube_size_1+1][3]==1
-                &&(map[miner1->i/ cube_size_1][miner1->j/ cube_size_1+1][2]==DIR_RIGHT
-                ||map[miner1->i/ cube_size_1][miner1->j/ cube_size_1+1][2]==DIR_RIGHT_UP
-                ||map[miner1->i/ cube_size_1][miner1->j/ cube_size_1+1][2]==DIR_RIGHT_DOWN))
-                {
-                    miner1->start_mining_slot();
-                }
-                else if (miner1->direction==DIR_DOWN&&map[miner1->i/ cube_size_1+1][miner1->j/ cube_size_1][0]==ITEM_BELT
-                &&map[miner1->i/ cube_size_1+1][miner1->j/ cube_size_1][3]==1
-                &&(map[miner1->i/ cube_size_1+1][miner1->j/ cube_size_1][2]==DIR_DOWN
-                ||map[miner1->i/ cube_size_1+1][miner1->j/ cube_size_1][2]==DIR_DOWN_RIGHT
-                ||map[miner1->i/ cube_size_1+1][miner1->j/ cube_size_1][2]==DIR_DOWN_LEFT))
-                {
-                    miner1->start_mining_slot();
-                }
-                else if (miner1->direction==DIR_LEFT&&map[miner1->i/ cube_size_1][miner1->j/ cube_size_1-1][0]==ITEM_BELT
-                &&map[miner1->i/ cube_size_1][miner1->j/ cube_size_1-1][3]==1
-                &&(map[miner1->i/ cube_size_1][miner1->j/ cube_size_1-1][2]==DIR_LEFT
-                ||map[miner1->i/ cube_size_1][miner1->j/ cube_size_1-1][2]==DIR_LEFT_DOWN
-                ||map[miner1->i/ cube_size_1][miner1->j/ cube_size_1-1][2]==DIR_LEFT_UP))
-                {
-                    miner1->start_mining_slot();
-                }
-            }
-            else
-            {
-                if(miner1->direction==DIR_UP&&map[miner1->i/ cube_size_1-1][miner1->j/ cube_size_1][0]!=ITEM_BELT)
-                {
-                    miner1->stop_mining_slot();
-                }
-                else if (miner1->direction==DIR_RIGHT&&map[miner1->i/ cube_size_1][miner1->j/ cube_size_1+1][0]!=ITEM_BELT)
-                {
-                    miner1->stop_mining_slot();
-                }
-                else if (miner1->direction==DIR_DOWN&&map[miner1->i/ cube_size_1+1][miner1->j/ cube_size_1][0]!=ITEM_BELT)
-                {
-                    miner1->stop_mining_slot();
-                }
-                else if (miner1->direction==DIR_LEFT&&map[miner1->i/ cube_size_1][miner1->j/ cube_size_1-1][0]!=ITEM_BELT)
-                {
-                    miner1->stop_mining_slot();
-                }
-            }
-        }
-    }
-}
 
 void game_page::mouseMoveEvent(QMouseEvent *event)
 {
@@ -240,10 +175,6 @@ void game_page::delete_item(QMouseEvent *event)
 
     if((event->buttons() &Qt::RightButton)&&map[i][j][0]!=0&&map[i][j][0]!=ITEM_MINE&&map[i][j][0]!=ITEM_HUB&&map[i][j][0]!=ITEM_MINERANDMINE&&map[i][j][0]!=ITEM_CUTTER)
     {
-        if(item_list[std::make_pair(i, j)]->cargo_in!=nullptr)
-        {
-            cargo_list.remove(item_list[std::make_pair(i, j)]->cargo_in->key);
-        }
         delete item_list[std::make_pair(i, j)];
         item_list.remove(std::make_pair(i, j));
         map[i][j][0] = 0;
@@ -335,7 +266,7 @@ void game_page::place_item(QMouseEvent *event)
     }
     if(is_placing_trash_bin&&item_to_place==nullptr)
     {
-        item_to_place = new trash_bin(mouse_x , mouse_y , DIR_DOWN, 1, 1, resource_manager::instance().get_pic("trash_bin_up"));
+        item_to_place = new trash_bin(mouse_x , mouse_y , DIR_UP, 1, 1, resource_manager::instance().get_pic("trash_bin_up"));
     }
     if(is_placing_cutter&&item_to_place==nullptr)
     {
@@ -380,6 +311,7 @@ void game_page::set_item(QMouseEvent *event)
         if(map[event->y()/ cube_size_1][event->x()/ cube_size_1][0]!=ITEM_MINE)
             return;
         miner * new_miner = new miner((event->y()/ cube_size_1)*cube_size_1, (event->x()/ cube_size_1)*cube_size_1, item_to_place->direction, item_to_place->level, item_to_place->speed, resource_manager::instance().get_pic("miner_up"));
+        delete item_to_place;
         item_to_place = nullptr;
         item_list[std::make_pair(new_miner->i/ cube_size_1, new_miner->j/ cube_size_1)] = new_miner;
         is_placing_miner = false;
@@ -393,6 +325,7 @@ void game_page::set_item(QMouseEvent *event)
         if(map[event->y()/ cube_size_1][event->x()/ cube_size_1][0]!=0)
             return;
         trash_bin * new_trash_bin = new trash_bin((event->y()/ cube_size_1)*cube_size_1, (event->x()/ cube_size_1)*cube_size_1, item_to_place->direction, item_to_place->level, item_to_place->speed, resource_manager::instance().get_pic("trash_bin_up"));
+        delete item_to_place;
         item_to_place = nullptr;
         item_list[std::make_pair(new_trash_bin->i/ cube_size_1, new_trash_bin->j/ cube_size_1)] = new_trash_bin;
         is_placing_trash_bin = false;
@@ -408,6 +341,7 @@ void game_page::set_item(QMouseEvent *event)
         ||((item_to_place->direction==DIR_RIGHT||item_to_place->direction==DIR_LEFT)&&map[event->y()/ cube_size_1+1][event->x()/ cube_size_1][0]!=0))
             return;
         cutter * new_cutter = new cutter((event->y()/ cube_size_1)*cube_size_1, (event->x()/ cube_size_1)*cube_size_1, item_to_place->direction, item_to_place->level, item_to_place->speed, resource_manager::instance().get_pic("cutter_up"));
+        delete item_to_place;
         item_to_place = nullptr;
         item_list[std::make_pair(new_cutter->i/ cube_size_1, new_cutter->j/ cube_size_1)] = new_cutter;
         is_placing_cutter = false;
