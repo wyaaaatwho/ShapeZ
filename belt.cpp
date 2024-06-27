@@ -5,7 +5,7 @@
 
 int belt::belt_speed = 2;
 
-QTimer belt::belt_timer;
+
 
 void game_page::placeBelt(QMouseEvent *event)
 {
@@ -34,10 +34,11 @@ void game_page::placeBelt(QMouseEvent *event)
         int prev_i = mouse_y / cube_size_1;
         int prev_j = mouse_x / cube_size_1;
 
-        if (current_i != prev_i || current_j != prev_j){
-            if (current_i >= 0 && current_i < 10 && current_j >= 0 && current_j < 18) {
-                if (map[current_i][current_j][0] == 0 && map[prev_i][prev_j][0] == ITEM_BELT &&
-                    map[prev_i][prev_j][3] == 0)
+        if (current_i != prev_i || current_j != prev_j)
+        {
+            if (current_i >= 0 && current_i < 10 && current_j >= 0 && current_j < 18)
+            {
+                if (map[current_i][current_j][0] == 0 && map[prev_i][prev_j][0] == ITEM_BELT &&map[prev_i][prev_j][3] == 0)
                     // if the current position is empty and the previous position is belt
                 {
                     map[current_i][current_j][0] = ITEM_BELT;
@@ -69,7 +70,8 @@ void game_page::placeBelt(QMouseEvent *event)
                             else if (map[prev_i][prev_j][2] == DIR_DOWN)
                                 map[prev_i][prev_j][2] = DIR_DOWN_LEFT;
                         }
-                    } else if (map[prev_i][prev_j][2] == 0)//if the previous belt has no direction
+                    }
+                    else if (map[prev_i][prev_j][2] == 0)//if the previous belt has no direction
                     {
                         if (current_i - 1 == prev_i && current_j == prev_j) {
                             map[current_i][current_j][2] = DIR_DOWN;
@@ -85,13 +87,13 @@ void game_page::placeBelt(QMouseEvent *event)
                             map[prev_i][prev_j][2] = DIR_LEFT;
                         }
                     }
-                } else if (map[current_i][current_j][0] == 0 && map[prev_i][prev_j][0] ==
-                                                                0)// if the current position is empty and the previous position is empty
+                }
+                else if (map[current_i][current_j][0] == 0 && map[prev_i][prev_j][0] == 0)// if the current position is empty and the previous position is empty
                 {
                     map[current_i][current_j][0] = ITEM_BELT;
                     map[current_i][current_j][3] = 0;//set the current position to belt
-                } else if (map[current_i][current_j][0] == ITEM_BELT &
-                           map[current_i][current_j][3] == 0) // if current has, call it back
+                }
+                else if (map[current_i][current_j][0] == ITEM_BELT &&map[current_i][current_j][3] == 0) // if current has, call it back
                 {
                     if (((map[current_i][current_j][2] == DIR_DOWN) ||
                          (map[current_i][current_j][2] == DIR_LEFT_DOWN) ||
@@ -134,6 +136,37 @@ void game_page::placeBelt(QMouseEvent *event)
                         map[current_i][current_j - 1][1] = 0;
                         map[current_i][current_j - 1][2] = 0;
                         map[current_i][current_j - 1][3] = 0;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if(map[current_i][current_j][0] == 0 && map[current_i][current_j][3] == 0)
+            {
+                map[current_i][current_j][0] = ITEM_BELT;
+                map[current_i][current_j][3] = 0;
+
+                if(abs(mouse_x-current_x)>abs(mouse_y-current_y))
+                {
+                    if(mouse_x<current_x)
+                    {
+                        map[current_i][current_j][2] = DIR_RIGHT;
+                    }
+                    else
+                    {
+                        map[current_i][current_j][2] = DIR_LEFT;
+                    }
+                }
+                else
+                {
+                    if(mouse_y<current_y)
+                    {
+                        map[current_i][current_j][2] = DIR_DOWN;
+                    }
+                    else
+                    {
+                        map[current_i][current_j][2] = DIR_UP;
                     }
                 }
             }
@@ -227,8 +260,7 @@ belt::belt(int i, int j, int direction, int level, int speed, QPixmap belt_pix):
     cargo_out = nullptr;
 
 //timer
-    connect(&belt_timer, &QTimer::timeout, this, &belt::move_cargo);
-    belt_timer.start(16);
+    connect(&game_page::great_timer, &QTimer::timeout, this, &belt::move_cargo);
 
     if(direction == DIR_UP)
     {
@@ -426,6 +458,18 @@ void belt::move_cargo()
             else if(game_page::map[out_i][out_j][0]==ITEM_TRASH_BIN)
             {
                 if(game_page::item_list[std::make_pair(out_i,out_j)]->cargo_in==nullptr)
+                {
+                    game_page::item_list[std::make_pair(out_i,out_j)]->cargo_in = cargo_out;
+
+                    cargo_in =nullptr;
+                    cargo_out = nullptr;
+                }
+            }
+            else if(game_page::map[out_i][out_j][0]==ITEM_TRANSFORMER)
+            {
+                if(game_page::item_list[std::make_pair(out_i,out_j)]->cargo_in==nullptr&&
+                        game_page::item_list[std::make_pair(out_i,out_j)]->in_i==this->i&&
+                        game_page::item_list[std::make_pair(out_i,out_j)]->in_j==this->j)
                 {
                     game_page::item_list[std::make_pair(out_i,out_j)]->cargo_in = cargo_out;
 

@@ -54,6 +54,11 @@ resource_manager::resource_manager()
     my_resources["cutter_down"]=QPixmap("resource/cutter_down.png");
     my_resources["cutter_left"]=QPixmap("resource/cutter_left.png");
     my_resources["cutter_right"]=QPixmap("resource/cutter_right.png");
+    my_resources["transformer_up"]=QPixmap("resource/transformer_up.png");
+    my_resources["transformer_down"]=QPixmap("resource/transformer_down.png");
+    my_resources["transformer_left"]=QPixmap("resource/transformer_left.png");
+    my_resources["transformer_right"]=QPixmap("resource/transformer_right.png");
+    my_resources["transformer_button"]=QPixmap("resource/transformer_button.png");
 
     my_resources["circle"]=QPixmap("resource/circle.png");
     my_resources["square"]=QPixmap("resource/square.png");

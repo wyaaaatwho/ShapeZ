@@ -36,7 +36,6 @@ public:
 
 
     QPixmap belt_pix;
-    static QTimer belt_timer;
 };
 
 

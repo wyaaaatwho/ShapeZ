@@ -30,6 +30,7 @@ public:
     ~cutter() override;
     void draw_item(QPainter &painter) override;
     void move_cargo() override;
+    void update_state();
 
     cargo *cargo_out2;
 
@@ -41,6 +42,10 @@ public:
 
     bool out_1_ready;
     bool out_2_ready;
+
+    static int interval;
+
+
 };
 
 

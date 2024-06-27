@@ -5,14 +5,13 @@
 #include "trash_bin.h"
 #include "game_page.h"
 
-QTimer trash_bin::trash_bin_timer;
+
 
 trash_bin::trash_bin(int i, int j, int direction, int level, int speed, QPixmap trash_bin_pic)
                     :item(i,j,direction,level,speed),trash_bin_pic(trash_bin_pic)
                     {
                         this->type =ITEM_TRASH_BIN;
-                        connect(&trash_bin_timer, &QTimer::timeout, this, &trash_bin::move_cargo);
-                        trash_bin_timer.start(16);
+                        connect(&game_page::great_timer, &QTimer::timeout, this, &trash_bin::move_cargo);
 
                         cargo_in = nullptr;
                         cargo_out = nullptr;

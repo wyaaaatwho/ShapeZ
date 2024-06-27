@@ -61,8 +61,11 @@ public:
     static bool is_placing_miner;
     static bool is_placing_cutter;
     static bool is_placing_trash_bin;
+    static bool is_placing_transformer;
 
     static item *item_to_place;
+
+    static QTimer great_timer; // 大时钟
 
 
     signals:
@@ -74,6 +77,7 @@ public slots:
         void handle_miner();
         void handle_cutter();
         void handle_trash_bin();
+        void handle_transformer();
 
 protected:
     //void mousePressEvent(QMouseEvent *event) override;
@@ -97,6 +101,7 @@ protected:
 
 
 
+
 private:
     QPushButton *store_button;
     QPushButton *back_button;
@@ -104,12 +109,13 @@ private:
     QPushButton *miner_button;
     QPushButton *belt_button;
     QPushButton *trash_bin_button;
+    QPushButton *transformer_button;
     QPixmap game_background;
     QPixmap cutter_pic;
     QPixmap miner_pic;
     QPixmap belt_pic;
     QPixmap trash_bin_pic;
-    QTimer *timer;
+
 
 };
 

@@ -12,6 +12,7 @@
 #include "item.h"
 #include "trash_bin.h"
 #include "cutter.h"
+#include "transformer.h"
 
 #include <iostream>
 
@@ -24,10 +25,13 @@ bool game_page::want_place_belt = false;
 bool game_page::is_placing_miner = false;
 bool game_page::is_placing_cutter = false;
 bool game_page::is_placing_trash_bin = false;
+bool game_page::is_placing_transformer = false;
 
 int game_page::map[16][24][4] = {0};
 
 item* game_page::item_to_place = nullptr;
+
+QTimer game_page::great_timer;
 
 game_page::game_page(QWidget *parent):QWidget(parent)
 {
@@ -39,10 +43,9 @@ game_page::game_page(QWidget *parent):QWidget(parent)
 
     setMouseTracking(true); // start tracking mouse
 
-    timer = new QTimer(reinterpret_cast<QObject *>(this));
-    connect(timer, &QTimer::timeout, this, QOverload<>::of(&game_page::update));
-    //connect(timer, &QTimer::timeout, this, &game_page::emit_signals);
-    timer->start(16); // 60 fps
+
+    connect(&great_timer, &QTimer::timeout, this, QOverload<>::of(&game_page::update));
+    great_timer.start(16); // 60 fps
 
     // Initialize the mine
     set_mine();
@@ -59,8 +62,7 @@ game_page::game_page(QWidget *parent):QWidget(parent)
 
 game_page::~game_page()
 {
-    delete timer;
-    timer = nullptr;
+    // Delete all items in item_list
     delete back_button;
     back_button = nullptr;
     delete store_button;
@@ -103,7 +105,7 @@ void game_page::paintEvent(QPaintEvent *event)
     {
         draw_belt_blue(painter);
     }
-    if((is_placing_miner||is_placing_cutter||is_placing_trash_bin)&&item_to_place!=nullptr) // draw moving item
+    if((is_placing_miner||is_placing_cutter||is_placing_trash_bin||is_placing_transformer)&&item_to_place!=nullptr) // draw moving item
     {
         item_to_place->draw_item(painter);
     }
@@ -112,27 +114,36 @@ void game_page::paintEvent(QPaintEvent *event)
 // button slots
 void game_page::handle_belt()
 {
-    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false)
+    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false&&is_placing_transformer==false)
     want_place_belt=true;
     std::cout<<"want_place_belt:"<<want_place_belt<<std::endl;
 }
 void game_page::handle_miner()
 {
-    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false)
+    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false&&is_placing_transformer==false)
     is_placing_miner=true;
     std::cout<<"is_placing_miner:"<<is_placing_miner<<std::endl;
 }
 void game_page::handle_cutter()
 {
-    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false)
+    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false&&is_placing_transformer==false)
     is_placing_cutter=true;
     std::cout<<"is_placing_cutter:"<<is_placing_cutter<<std::endl;
 }
 void game_page::handle_trash_bin()
 {
-    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false)
+    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false&&is_placing_transformer==false)
     is_placing_trash_bin=true;
     std::cout<<"is_placing_trash_bin:"<<is_placing_trash_bin<<std::endl;
+}
+
+void game_page::handle_transformer()
+{
+    if(is_placing_miner==false&&is_placing_cutter==false&&is_placing_trash_bin==false&&is_placing_belt==false&&want_place_belt==false&&is_placing_transformer==false)
+    {
+        is_placing_transformer=true;
+    }
+    std::cout<<"is_placing_transformer:"<<is_placing_transformer<<std::endl;
 }
 
 
@@ -160,7 +171,7 @@ void game_page::mousePressEvent(QMouseEvent *event)
 void game_page::keyPressEvent(QKeyEvent *event)
 {
 
-    if(is_placing_miner||is_placing_cutter||is_placing_trash_bin)
+    if(is_placing_miner||is_placing_cutter||is_placing_trash_bin||is_placing_transformer)
     rotate_item(event);
 
     update();
@@ -255,6 +266,18 @@ void game_page::delete_item(QMouseEvent *event)
             }
         }
     }
+
+    //delete transformer
+    if((event->buttons() &Qt::RightButton)&&map[i][j][0]==ITEM_TRANSFORMER)
+    {
+        delete item_list[std::make_pair(i, j)];
+        item_list.remove(std::make_pair(i, j));
+        map[i][j][0] = 0;
+        map[i][j][1] = 0;
+        map[i][j][2] = 0;
+        map[i][j][3] = 0;
+    }
+
 }
 
 void game_page::place_item(QMouseEvent *event)
@@ -271,6 +294,10 @@ void game_page::place_item(QMouseEvent *event)
     if(is_placing_cutter&&item_to_place==nullptr)
     {
         item_to_place = new cutter(mouse_y , mouse_x , DIR_UP, 1, 1, resource_manager::instance().get_pic("cutter_up"));
+    }
+    if(is_placing_transformer&&item_to_place==nullptr)
+    {
+        item_to_place = new transformer(mouse_y , mouse_x , DIR_UP, 1, 1, resource_manager::instance().get_pic("transformer_up"));
     }
     if(item_to_place==nullptr)
         return;
@@ -363,6 +390,21 @@ void game_page::set_item(QMouseEvent *event)
             map[new_cutter->i/ cube_size_1+1][new_cutter->j/ cube_size_1][2] =new_cutter->direction;
             map[new_cutter->i/ cube_size_1+1][new_cutter->j/ cube_size_1][1] = new_cutter->level;
         }
+    }
+    //set transformer
+
+    if(is_placing_transformer && (event->buttons() & Qt::LeftButton))
+    {
+        if(map[event->y()/ cube_size_1][event->x()/ cube_size_1][0]!=0)
+            return;
+        transformer * new_transformer = new transformer((event->y()/ cube_size_1)*cube_size_1, (event->x()/ cube_size_1)*cube_size_1, item_to_place->direction, item_to_place->level, item_to_place->speed, resource_manager::instance().get_pic("transformer_up"));
+        delete item_to_place;
+        item_to_place = nullptr;
+        item_list[std::make_pair(new_transformer->i/ cube_size_1, new_transformer->j/ cube_size_1)] = new_transformer;
+        is_placing_transformer = false;
+        map[new_transformer->i/ cube_size_1][new_transformer->j/ cube_size_1][0] = ITEM_TRANSFORMER;
+        map[new_transformer->i/ cube_size_1][new_transformer->j/ cube_size_1][2] = new_transformer->direction;
+        map[new_transformer->i/ cube_size_1][new_transformer->j/ cube_size_1][1] = new_transformer->level;
     }
 }
 
@@ -470,6 +512,22 @@ void game_page::set_buttons()
                                  "}"));
     connect(trash_bin_button, &QPushButton::clicked, this, &game_page::handle_trash_bin);
 
+    transformer_button = new QPushButton(this);
+    transformer_button->setGeometry(QRect(QPoint(window_width_1 / 2 + 160, window_height_1 - 80), QSize(80, 80)));
+    transformer_button->setIcon(QPixmap("resource/transformer_button.png"));
+    transformer_button->setStyleSheet(("QPushButton {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid black; border-radius: 10px; "      // border style
+                                 "background-color: lightgray;" // background color
+                                 "padding: 5px;"                // padding
+                                 "qproperty-iconSize: 60px 60px;" // icon size
+                                 "}"
+                                 "QPushButton:hover {"
+                                 "font-size: 16px;"
+                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
+                                 " background-color: lightblue;" // hover background
+                                 "}"));
+    connect(transformer_button, &QPushButton::clicked, this, &game_page::handle_transformer);
 
 }
 

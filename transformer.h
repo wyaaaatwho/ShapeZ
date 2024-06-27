@@ -1,9 +1,9 @@
 //
-// Created by 26711 on 2024/6/22.
+// Created by 26711 on 2024/6/25.
 //
 
-#ifndef SHAPEZ_TRASH_BIN_H
-#define SHAPEZ_TRASH_BIN_H
+#ifndef SHAPEZ_TRANSFORMER_H
+#define SHAPEZ_TRANSFORMER_H
 #include <QApplication>
 #include <QMainWindow>
 #include <QPixmap>
@@ -17,22 +17,19 @@
 #include <QDebug>
 #include <QIcon>
 #include <QWidget>
+#include <QMap>
 #include <iostream>
 #include "item.h"
-#include"global.h"
 
-class trash_bin :public item
+class transformer :public item
 {
 public:
-    trash_bin(int i,int j,int direction,int level,int speed,QPixmap trash_bin_pic);
-    ~trash_bin() override;
+    transformer(int i,int j,int direction,int level,int speed,QPixmap transformer_pic);
+    ~transformer() override;
     void draw_item(QPainter &painter) override;
-
     void move_cargo() override;
-
-    QPixmap trash_bin_pic;
-
+    QPixmap transformer_pic;
 };
 
 
-#endif //SHAPEZ_TRASH_BIN_H
+#endif //SHAPEZ_TRANSFORMER_H

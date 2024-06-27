@@ -45,6 +45,8 @@ set(PROJECT_SOURCES
         hub.h
         cargo.cpp
         cargo.h
+        transformer.cpp
+        transformer.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

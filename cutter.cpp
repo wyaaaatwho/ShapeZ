@@ -4,6 +4,7 @@
 
 #include "cutter.h"
 QTimer cutter::cutter_timer;
+int cutter::interval ;
 
 cutter::cutter(int i, int j, int direction, int level, int speed, QPixmap cutter_pic)
                     :item(i,j,direction,level,speed),cutter_pic(cutter_pic)
@@ -68,7 +69,10 @@ cutter::cutter(int i, int j, int direction, int level, int speed, QPixmap cutter
                         out_2_ready = false;
 
                         connect(&cutter_timer, &QTimer::timeout, this, &cutter::move_cargo);
-                        cutter_timer.start(16);
+                        interval = 1/speed*1000;
+                        cutter_timer.start(interval);
+
+                        connect(&game_page::great_timer, &QTimer::timeout, this, &cutter::update_state);
 
                     }
 
@@ -178,7 +182,7 @@ void cutter::move_cargo()
             cargo_out2->y+=40;
         }
 
-        free_to_use =false;
+        //free_to_use =false;
     }
 
     // check if out 1 ready
@@ -205,8 +209,8 @@ void cutter::move_cargo()
             else if(direction == DIR_RIGHT)
             {
                 if(game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_RIGHT||
-                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_UP_RIGHT||
-                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_DOWN_RIGHT)
+                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_RIGHT_UP||
+                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_RIGHT_DOWN)
                 {
                     out_1_ready = true;
                 }
@@ -223,8 +227,8 @@ void cutter::move_cargo()
             else if(direction == DIR_LEFT)
             {
                 if(game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_LEFT||
-                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_UP_LEFT||
-                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_DOWN_LEFT)
+                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_LEFT_UP||
+                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_LEFT_UP)
                 {
                     out_1_ready = true;
                 }
@@ -255,8 +259,8 @@ void cutter::move_cargo()
             else if(direction == DIR_RIGHT)
             {
                 if(game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_RIGHT||
-                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_UP_RIGHT||
-                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_DOWN_RIGHT)
+                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_RIGHT_UP||
+                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_RIGHT_DOWN)
                 {
                     out_2_ready = true;
                 }
@@ -273,8 +277,8 @@ void cutter::move_cargo()
             else if(direction == DIR_LEFT)
             {
                 if(game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_LEFT||
-                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_UP_LEFT||
-                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_DOWN_LEFT)
+                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_LEFT_UP||
+                   game_page::map[out2_i/cube_size_1][out2_j/cube_size_1][2]==DIR_LEFT_DOWN)
                 {
                     out_2_ready = true;
                 }
@@ -293,6 +297,18 @@ void cutter::move_cargo()
 
         out_1_ready = false;
         out_2_ready = false;
+        //free_to_use = true;
+    }
+}
+
+void cutter::update_state()
+{
+    if(cargo_in!=nullptr||cargo_out!=nullptr||cargo_out2!=nullptr)
+    {
+        free_to_use = false;
+    }
+    else
+    {
         free_to_use = true;
     }
 }

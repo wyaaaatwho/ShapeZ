@@ -38,6 +38,7 @@
 #define ITEM_HUB 5
 #define ITEM_MINE 6
 #define ITEM_MINERANDMINE 7
+#define ITEM_TRANSFORMER 8
 
 
 #define CARGO_STOPPED 0

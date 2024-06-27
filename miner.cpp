@@ -101,9 +101,13 @@ void miner::stop_mining_slot()
 
 void miner:: generate_cargo()
 {
-    if(game_page::map[out_i][out_j][0]==ITEM_BELT&&game_page::map[out_i][out_j][2]==direction&&game_page::map[out_i][out_j][3]==1)
+    if(game_page::map[out_i][out_j][0]==ITEM_BELT&&game_page::map[out_i][out_j][3]==1)
     {
-        start_mining = true;
+        if(game_page::item_list[std::make_pair(out_i,out_j)]->in_i==i/cube_size_1&&
+           game_page::item_list[std::make_pair(out_i,out_j)]->in_j==j/cube_size_1)
+        {
+            start_mining= true;
+        }
     }
     else
     {
@@ -169,15 +173,18 @@ void miner::move_cargo()
 {
     if(cargo_in != nullptr)
     {
-        if(game_page::map[out_i][out_j][0]==ITEM_BELT&&game_page::map[out_i][out_j][2]==direction&&game_page::map[out_i][out_j][3]==1)
+        if(game_page::map[out_i][out_j][0]==ITEM_BELT&&game_page::map[out_i][out_j][3]==1)
         {
-            if(game_page::item_list[std::make_pair(out_i,out_j)]->cargo_in==nullptr)
+            if(game_page::item_list[std::make_pair(out_i,out_j)]->in_i==i/cube_size_1&&
+               game_page::item_list[std::make_pair(out_i,out_j)]->in_j==j/cube_size_1)  //if the belt is connected
             {
-                game_page::item_list[std::make_pair(out_i,out_j)]->cargo_in = cargo_out;
+                if (game_page::item_list[std::make_pair(out_i, out_j)]->cargo_in == nullptr) {
+                    game_page::item_list[std::make_pair(out_i, out_j)]->cargo_in = cargo_out;
 
-                //ready for next one
-                cargo_out = nullptr;
-                cargo_in = nullptr;
+                    //ready for next one
+                    cargo_out = nullptr;
+                    cargo_in = nullptr;
+                }
             }
         }
     }
