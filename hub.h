@@ -37,7 +37,7 @@ public:
    void move_cargo() override;
 
 
-    int size;
+    static int size;
     static int task1_num;
     static int task2_num;
     static int task1_progress;
@@ -60,10 +60,13 @@ public:
     QPixmap mineral_icon1;
     QPixmap mineral_icon2;
 
-    int game_level;
+    static hub* only_hub;
+
+    static int game_level;
 
 public slots:
     void get_cargo(int type);
+
 };
 
 

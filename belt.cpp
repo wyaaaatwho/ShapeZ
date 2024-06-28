@@ -5,8 +5,6 @@
 
 int belt::belt_speed = 2;
 
-
-
 void game_page::placeBelt(QMouseEvent *event)
 {
     //handle belt
@@ -186,7 +184,7 @@ void game_page::placeBelt(QMouseEvent *event)
         std::cout<<"is :"<<is_placing_belt<<std::endl;
         std::cout<<"want: "<<want_place_belt<<std::endl;
     }
-}
+} //place belt
 
 void game_page::draw_belt_blue(QPainter &painter) //draw blue belt
 {

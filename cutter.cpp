@@ -3,8 +3,11 @@
 //
 
 #include "cutter.h"
+#include"global.h"
 QTimer cutter::cutter_timer;
-int cutter::interval ;
+int cutter::cutter_speed = 1;
+int cutter::interval =1/cutter_speed*1000;
+
 
 cutter::cutter(int i, int j, int direction, int level, int speed, QPixmap cutter_pic)
                     :item(i,j,direction,level,speed),cutter_pic(cutter_pic)
@@ -68,11 +71,15 @@ cutter::cutter(int i, int j, int direction, int level, int speed, QPixmap cutter
                         out_1_ready = false;
                         out_2_ready = false;
 
-                        connect(&cutter_timer, &QTimer::timeout, this, &cutter::move_cargo);
-                        interval = 1/speed*1000;
+
+
                         cutter_timer.start(interval);
 
+                        connect(&cutter_timer, &QTimer::timeout, this, &cutter::move_cargo);
+
                         connect(&game_page::great_timer, &QTimer::timeout, this, &cutter::update_state);
+
+                        //connect(&game_page::great_timer, &QTimer::timeout, this, &cutter::set_interval);
 
                     }
 
@@ -228,7 +235,7 @@ void cutter::move_cargo()
             {
                 if(game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_LEFT||
                 game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_LEFT_UP||
-                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_LEFT_UP)
+                game_page::map[out1_i/cube_size_1][out1_j/cube_size_1][2]==DIR_LEFT_DOWN)
                 {
                     out_1_ready = true;
                 }
@@ -312,3 +319,5 @@ void cutter::update_state()
         free_to_use = true;
     }
 }
+
+

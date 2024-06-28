@@ -47,6 +47,8 @@ set(PROJECT_SOURCES
         cargo.h
         transformer.cpp
         transformer.h
+        win_page.cpp
+        win_page.h
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

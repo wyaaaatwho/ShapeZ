@@ -9,14 +9,14 @@ help_page::help_page(QWidget *parent):QWidget(parent)
 {
     resource_manager& vault = resource_manager::instance();
     //set start page
-    this->setFixedSize(window_width_1, window_height_1);
+    this->setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     help_page_pic = vault.get_pic("help_page");
     QPalette palette;
     palette.setBrush(this->backgroundRole(), QBrush(help_page_pic));
     this->setPalette(palette);
 
     back_button = new QPushButton("Back", this);
-    back_button->setGeometry(QRect(QPoint(window_width_1/2-100, (window_height_1/2)+200), QSize(200, 60)));
+    back_button->setGeometry(QRect(QPoint(WINDOW_WIDTH/2-100, (WINDOW_HEIGHT/2)+200), QSize(200, 60)));
     back_button->setStyleSheet(("QPushButton {"
                                 "font-size: 20px;"
                                 "border: 2px solid black; border-radius: 10px; "      // border style
@@ -32,7 +32,7 @@ help_page::help_page(QWidget *parent):QWidget(parent)
     connect(back_button, &QPushButton::clicked,[this](){emit changePage(0);});
 
     help_text = new QTextEdit(this);
-    help_text->setGeometry(QRect(QPoint(window_width_1/2-500, ((window_height_1/2)-240)), QSize(1000, 400)));
+    help_text->setGeometry(QRect(QPoint(WINDOW_WIDTH/2-500, ((WINDOW_HEIGHT/2)-240)), QSize(1000, 400)));
     help_text->setStyleSheet(("QTextEdit {"
                               "font-size: 20px;"
                               "border: 2px solid black; border-radius: 10px; "      // border style

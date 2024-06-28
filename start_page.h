@@ -26,15 +26,18 @@ public:
     Startpage(QWidget *parent=nullptr);
     ~Startpage();
     void paintEvent(QPaintEvent *event) override;
-    // use a static function to get the instance of the class,USING shared ptr to avoid memory leak
 
+    void load_map_from_file();
+    // use a static function to get the instance of the class,USING shared ptr to avoid memory leak
 
 
 private slots:
 
     void on_start_button();
     void leave_start_button();
-    //void handle_continue_button();
+    void new_game();
+    void on_continue_button();
+    //void new_game();
 signals:
     void changePage(int index);
 

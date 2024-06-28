@@ -32,6 +32,7 @@ public:
     void move_cargo() override;
     void update_state();
 
+
     cargo *cargo_out2;
 
     QPixmap cutter_pic;
@@ -44,6 +45,7 @@ public:
     bool out_2_ready;
 
     static int interval;
+    static int cutter_speed;
 
 
 };

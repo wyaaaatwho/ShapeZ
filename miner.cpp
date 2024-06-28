@@ -8,17 +8,19 @@
 #include "cargo.h"
 #include <QObject>
 
-QTimer *miner::timer;
+QTimer *miner::miner_timer;
+int miner::interval = 3/miner_speed*1000;
+int miner::miner_speed=1;
 
 miner::miner(int i, int j, int direction, int level, int speed, QPixmap miner_pic) : item(i, j, direction, level, speed), miner_pic(miner_pic)
 {
         this->type=ITEM_MINER;
         start_mining = false;
 
-        timer = new QTimer(reinterpret_cast<QObject *>(this));
-        connect(timer, &QTimer::timeout, this, &miner::generate_cargo);
-        interval = 3/speed*1000;
-        timer->start(interval);
+        miner_timer = new QTimer(reinterpret_cast<QObject *>(this));
+        connect(miner_timer, &QTimer::timeout, this, &miner::generate_cargo);
+
+        miner_timer->start(interval);
 
 
         cargo_in = nullptr;
@@ -64,7 +66,7 @@ miner::~miner()
         delete cargo_in;
     }
     //avoid memory leak
-    cargo_out == nullptr;
+     cargo_out == nullptr;
 }
 
 void miner::draw_item(QPainter &painter)

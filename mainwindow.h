@@ -14,6 +14,7 @@
 #include <QIcon>
 #include <QWidget>
 #include <QStackedWidget>
+#include "game_page.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -30,17 +31,29 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    int static game_state;
+    void stop_time();//stop timer when not playing the game
+    void start_time();//start timer when playing the game
+
+    static QStackedWidget *stacked_widget;
+    static game_page *currentGamePage;
+
+    static int game_state;
 
 private:
     Ui::MainWindow *ui;
     QPushButton *button;
-    QStackedWidget *stacked_widget;
 
-private slots:
+
+public slots:
     void setPage(int index) {
+
         stacked_widget->setCurrentIndex(index);
+        if(index==4)
+            start_time();
+        else
+            stop_time();
     }
+
 
 
 };

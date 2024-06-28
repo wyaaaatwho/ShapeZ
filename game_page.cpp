@@ -13,6 +13,8 @@
 #include "trash_bin.h"
 #include "cutter.h"
 #include "transformer.h"
+#include "cargo.h"
+#include "hub.h"
 
 #include <iostream>
 
@@ -37,14 +39,30 @@ game_page::game_page(QWidget *parent):QWidget(parent)
 {
 
     resource_manager& vault = resource_manager::instance();
-    setFixedSize(window_width_1,window_height_1);
+    setFixedSize(WINDOW_WIDTH,WINDOW_HEIGHT);
     setWindowTitle("Shapez");
+
     game_background=vault.get_pic("game_background");
+
+    //set values
+    is_placing_transformer = false;
+    is_placing_trash_bin = false;
+    is_placing_cutter = false;
+    is_placing_miner = false;
+    is_placing_belt = false;
+    want_place_belt = false;
+
+
+    //set coin display
+    coin_icon=vault.get_pic("coin_icon");
+    coin_font = new QFont("Arial", 30);
+    coin_font->setBold(true);
 
     setMouseTracking(true); // start tracking mouse
 
 
     connect(&great_timer, &QTimer::timeout, this, QOverload<>::of(&game_page::update));
+    connect(&great_timer, &QTimer::timeout, this, &game_page::if_win);
     great_timer.start(16); // 60 fps
 
     // Initialize the mine
@@ -54,9 +72,7 @@ game_page::game_page(QWidget *parent):QWidget(parent)
     set_buttons();
 
     // initialize the hub
-
     set_hub();
-
 
 }
 
@@ -73,10 +89,20 @@ game_page::~game_page()
     cutter_button = nullptr;
     delete miner_button;
     miner_button = nullptr;
+    delete trash_bin_button;
+    trash_bin_button = nullptr;
+    delete transformer_button;
+    transformer_button = nullptr;
+    delete coin_font;
+    coin_font = nullptr;
 
     // Delete all items in item_list
     qDeleteAll(item_list);
     item_list.clear();
+    qDeleteAll(mine_list);
+    mine_list.clear();
+    qDeleteAll(cargo_list);
+    cargo_list.clear();
 
 }
 
@@ -85,7 +111,9 @@ void game_page::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
     QPainter painter(this);
     painter.drawPixmap(0,0,width(),height(), game_background);
+
     draw_mine(painter); //draw mine
+    display_coin(painter); // display coin
 
     for (auto i : item_list)
     {
@@ -379,7 +407,7 @@ void game_page::set_item(QMouseEvent *event)
             map[new_cutter->i/ cube_size_1][new_cutter->j/ cube_size_1][1] = new_cutter->level;
             map[new_cutter->i/ cube_size_1][new_cutter->j/ cube_size_1+1][0] = ITEM_CUTTER;
             map[new_cutter->i/ cube_size_1][new_cutter->j/ cube_size_1+1][2] =new_cutter->direction;
-            map[new_cutter->i/ cube_size_1][new_cutter->j/ cube_size_1+1][1] = new_cutter->level;
+            map[new_cutter->i/ cube_size_1][new_cutter->j/ cube_size_1+1][1] = -1;
         }
         else if(new_cutter->direction==DIR_LEFT||new_cutter->direction==DIR_RIGHT)
         {
@@ -388,7 +416,7 @@ void game_page::set_item(QMouseEvent *event)
             map[new_cutter->i/ cube_size_1][new_cutter->j/ cube_size_1][1] = new_cutter->level;
             map[new_cutter->i/ cube_size_1+1][new_cutter->j/ cube_size_1][0] = ITEM_CUTTER;
             map[new_cutter->i/ cube_size_1+1][new_cutter->j/ cube_size_1][2] =new_cutter->direction;
-            map[new_cutter->i/ cube_size_1+1][new_cutter->j/ cube_size_1][1] = new_cutter->level;
+            map[new_cutter->i/ cube_size_1+1][new_cutter->j/ cube_size_1][1] = -1;
         }
     }
     //set transformer
@@ -425,7 +453,7 @@ void game_page::set_buttons()
                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
                                 " background-color: lightblue;" // hover background
                                 "}"));
-    connect(back_button, &QPushButton::clicked, [this]() { emit changePage(0); });
+    connect(back_button, &QPushButton::clicked, this,&game_page::save_map_to_file);
 
     store_button = new QPushButton("Store", this);
     store_button->setGeometry(QRect(QPoint(0, 80), QSize(80, 80)));
@@ -442,10 +470,10 @@ void game_page::set_buttons()
                                  "border: 2px solid blue;border-radius: 10px;"      // hover style
                                  " background-color: lightblue;" // hover background
                                  "}"));
-    connect(store_button, &QPushButton::clicked, [this]() { emit changePage(3); });
+    connect(store_button, &QPushButton::clicked, [this]() { emit changePage(2); });
 
     belt_button = new QPushButton(this);
-    belt_button->setGeometry(QRect(QPoint(window_width_1 / 2 - 160, window_height_1 - 80), QSize(80, 80)));
+    belt_button->setGeometry(QRect(QPoint(WINDOW_WIDTH / 2 - 160, WINDOW_HEIGHT - 80), QSize(80, 80)));
     belt_button->setIcon(QPixmap("resource/belt_button"));
     belt_button->setStyleSheet(("QPushButton {"
                                 "font-size: 16px;"
@@ -462,7 +490,7 @@ void game_page::set_buttons()
     connect(belt_button, &QPushButton::clicked, this, &game_page::handle_belt);
 
     cutter_button = new QPushButton(this);
-    cutter_button->setGeometry(QRect(QPoint(window_width_1 / 2 - 80, window_height_1 - 80), QSize(80, 80)));
+    cutter_button->setGeometry(QRect(QPoint(WINDOW_WIDTH / 2 - 80, WINDOW_HEIGHT - 80), QSize(80, 80)));
     cutter_button->setIcon(QPixmap("resource/cutter_button"));
     cutter_button->setStyleSheet(("QPushButton {"
                                   "font-size: 16px;"
@@ -479,7 +507,7 @@ void game_page::set_buttons()
     connect(cutter_button, &QPushButton::clicked, this, &game_page::handle_cutter);
 
     miner_button = new QPushButton(this);
-    miner_button->setGeometry(QRect(QPoint(window_width_1 / 2, window_height_1 - 80), QSize(80, 80)));
+    miner_button->setGeometry(QRect(QPoint(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 80), QSize(80, 80)));
     miner_button->setIcon(QPixmap("resource/miner_button"));
     miner_button->setStyleSheet(("QPushButton {"
                                  "font-size: 16px;"
@@ -496,7 +524,7 @@ void game_page::set_buttons()
     connect(miner_button, &QPushButton::clicked, this, &game_page::handle_miner);
 
     trash_bin_button = new QPushButton(this);
-    trash_bin_button->setGeometry(QRect(QPoint(window_width_1 / 2 + 80, window_height_1 - 80), QSize(80, 80)));
+    trash_bin_button->setGeometry(QRect(QPoint(WINDOW_WIDTH / 2 + 80, WINDOW_HEIGHT - 80), QSize(80, 80)));
     trash_bin_button->setIcon(QPixmap("resource/trash_bin_button.png"));
     trash_bin_button->setStyleSheet(("QPushButton {"
                                  "font-size: 16px;"
@@ -513,7 +541,7 @@ void game_page::set_buttons()
     connect(trash_bin_button, &QPushButton::clicked, this, &game_page::handle_trash_bin);
 
     transformer_button = new QPushButton(this);
-    transformer_button->setGeometry(QRect(QPoint(window_width_1 / 2 + 160, window_height_1 - 80), QSize(80, 80)));
+    transformer_button->setGeometry(QRect(QPoint(WINDOW_WIDTH / 2 + 160, WINDOW_HEIGHT - 80), QSize(80, 80)));
     transformer_button->setIcon(QPixmap("resource/transformer_button.png"));
     transformer_button->setStyleSheet(("QPushButton {"
                                  "font-size: 16px;"
@@ -529,5 +557,72 @@ void game_page::set_buttons()
                                  "}"));
     connect(transformer_button, &QPushButton::clicked, this, &game_page::handle_transformer);
 
+}
+
+
+void game_page::display_coin(QPainter &painter)
+{
+    painter.drawPixmap(WINDOW_WIDTH-200, 20, 40, 40, coin_icon);
+    QFont originalFont = painter.font();
+
+    painter.setFont(*coin_font);
+
+    painter.drawText(WINDOW_WIDTH - 140, 55, QString::number(hub::coins));
+
+    painter.setFont(originalFont);
+}
+
+void game_page::save_map_to_file()
+{
+    QFile file("data.txt");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+
+        // write the map to the file
+        for (int i = 0; i < WINDOW_HEIGHT/cube_size_1; ++i) {
+            for (int j = 0; j < WINDOW_WIDTH/cube_size_1; ++j) {
+                for (int k = 0; k < 4; ++k) {
+                    out << map[i][j][k] << " ";
+                }
+                out << "\n";
+            }
+        }
+
+        //write game_level to the file
+        out << hub::game_level << "\n";
+        out<< hub::size << "\n";
+
+        //write coins to the file
+        out << hub::coins << "\n";
+        out << hub::coin_value << "\n";
+
+        // write the upgrades to the file
+        out << belt::belt_speed << "\n";
+
+        // write the miners to the file
+
+        //write cutter to the file
+        out << cutter::cutter_speed << "\n";
+
+        //write mine to the file
+        out << mine::upgraded << "\n";
+
+
+
+        file.close();
+        qDebug() << "Map saved to data.txt.";
+    } else {
+        qDebug() << "Failed to save map.";
+    }
+    emit changePage(0);
+}
+
+void game_page::if_win()
+{
+    if(hub::task_finished)
+    {
+        hub::task_finished=false;
+        emit changePage(3);
+    }
 }
 

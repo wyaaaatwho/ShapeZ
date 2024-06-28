@@ -65,6 +65,10 @@ resource_manager::resource_manager()
     my_resources["left_circle"]=QPixmap("resource/left_circle.png");
     my_resources["right_circle"]=QPixmap("resource/right_circle.png");
 
+    my_resources["coin_icon"]=QPixmap("resource/coin_icon.png");
+
+    my_resources["win_page_pic"]=QPixmap("resource/win_page_pic.png");
+
 }
 
 resource_manager::~resource_manager()

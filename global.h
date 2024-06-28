@@ -8,8 +8,8 @@
 #define SHAPEZ_GLOBAL_H
 
 
-#define window_width_1 1440
-#define window_height_1 800
+#define WINDOW_WIDTH 1440
+#define WINDOW_HEIGHT 800
 #define cube_size_1 80
 #define CARGO_SIZE 60
 #define stopped 0

@@ -19,6 +19,7 @@
 #include <QIcon>
 #include <QWidget>
 #include <QMap>
+#include <QFileDialog>
 
 #include "item.h"
 #include "mine.h"
@@ -78,6 +79,9 @@ public slots:
         void handle_cutter();
         void handle_trash_bin();
         void handle_transformer();
+        void save_map_to_file();
+
+
 
 protected:
     //void mousePressEvent(QMouseEvent *event) override;
@@ -99,6 +103,13 @@ protected:
     void rotate_item(QKeyEvent *event);
     void set_item(QMouseEvent *event);
 
+    //display coin
+
+    void display_coin(QPainter &painter);
+
+    //win or lose
+    void if_win();
+
 
 
 
@@ -110,11 +121,15 @@ private:
     QPushButton *belt_button;
     QPushButton *trash_bin_button;
     QPushButton *transformer_button;
+
+    QFont *coin_font; // font for displaying coin
+
     QPixmap game_background;
     QPixmap cutter_pic;
     QPixmap miner_pic;
     QPixmap belt_pic;
     QPixmap trash_bin_pic;
+    QPixmap coin_icon;
 
 
 };

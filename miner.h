@@ -34,9 +34,10 @@ public:
     void move_cargo() override;
 
     bool start_mining;
-    int interval;
+    static int interval;
+    static int miner_speed;
     QPixmap miner_pic;
-    static QTimer *timer;
+    static QTimer *miner_timer;
 
     void start_mining_slot();
     void stop_mining_slot();

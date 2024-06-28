@@ -26,28 +26,30 @@ public:
     store_page(QWidget *parent=nullptr);
     ~store_page();
     void paintEvent(QPaintEvent *event) override;
+    void display_coin(QPainter &painter);
 
 
 
 private slots:
 
-    /*void handle_expand_map();
-    void handle_clear_barriers();
     void handle_increase_mine();
-    void handle_hub_big();
-    void handle_money();*/
+    void handle_money();
+    void upgrade_hub();
 
 signals:
     void changePage(int index);
 
 private:
+    QFont *coin_font; // font for displaying coin
+
     QPushButton *back_button;
-    QPushButton *expand_map;
-    QPushButton *clear_barriers;
     QPushButton *increase_mine;
     QPushButton *hub_big;
     QPushButton *money;
     QPixmap store_page_pic;
+    QPixmap coin_icon;
+
+    QTimer *timer;
 
 };
 
