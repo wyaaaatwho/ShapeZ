@@ -180,7 +180,6 @@ void Startpage::on_continue_button()
     load_map_from_file(); // load the map from the file
 
 
-
   //  load page
     for (int i = 0; i < WINDOW_HEIGHT / cube_size_1; i++)
     {

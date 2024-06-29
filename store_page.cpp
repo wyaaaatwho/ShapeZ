@@ -134,45 +134,9 @@ void store_page::handle_increase_mine() // increase the mine
         hub::coins -= 400;
         mine::upgraded += 1;
 
-        if(game_page::map[2][2][0]!=0)
-        {
-            game_page::map[2][2][0]=ITEM_MINE;
-            auto key = std::make_pair(2, 2);
-            if(game_page::item_list.contains(key))
-            {
-                auto item = game_page::item_list[key];
-                delete item;
-                game_page::item_list.remove(key);
-            }
-        }
-
-        if(game_page::map[2][3][0]!=0)
-        {
-            game_page::map[2][3][0]=ITEM_MINE;
-            auto key = std::make_pair(2, 3);
-            if(game_page::item_list.contains(key))
-            {
-                auto item = game_page::item_list[key];
-                delete item;
-                game_page::item_list.remove(key);
-            }
-        }
-
-        if(game_page::map[3][2][0]!=0)
-        {
-            game_page::map[3][2][0]=ITEM_MINE;
-            auto key = std::make_pair(3, 2);
-            if(game_page::item_list.contains(key))
-            {
-                auto item = game_page::item_list[key];
-                delete item;
-                game_page::item_list.remove(key);
-            }
-        }
 
         if(game_page::map[3][3][0]!=0)
         {
-            game_page::map[3][3][0]=ITEM_MINE;
             auto key = std::make_pair(3, 3);
             if(game_page::item_list.contains(key))
             {
@@ -181,15 +145,52 @@ void store_page::handle_increase_mine() // increase the mine
                 game_page::item_list.remove(key);
             }
         }
+        game_page::map[3][3][0]=ITEM_MINE;
 
-        mine *mine_11=new mine(resource_manager::instance().get_pic("mine_1"),"circle",2,2);
-        game_page::mine_list[std::make_pair(2,2)]=mine_11;
-        mine *mine_12=new mine(resource_manager::instance().get_pic("mine_2"),"square",2,3);
-        game_page::mine_list[std::make_pair(2,3)]=mine_12;
-        mine *mine_13=new mine(resource_manager::instance().get_pic("mine_2"),"square",3,2);
-        game_page::mine_list[std::make_pair(3,2)]=mine_13;
-        mine *mine_14=new mine(resource_manager::instance().get_pic("mine_1"),"circle",3,3);
-        game_page::mine_list[std::make_pair(3,3)]=mine_14;
+        if(game_page::map[3][4][0]!=0)
+        {
+
+            auto key = std::make_pair(3, 4);
+            if(game_page::item_list.contains(key))
+            {
+                auto item = game_page::item_list[key];
+                delete item;
+                game_page::item_list.remove(key);
+            }
+        }game_page::map[3][4][0]=ITEM_MINE;
+
+        if(game_page::map[4][3][0]!=0)
+        {
+
+            auto key = std::make_pair(4, 3);
+            if(game_page::item_list.contains(key))
+            {
+                auto item = game_page::item_list[key];
+                delete item;
+                game_page::item_list.remove(key);
+            }
+        }game_page::map[4][3][0]=ITEM_MINE;
+
+        if(game_page::map[4][4][0]!=0)
+        {
+
+            auto key = std::make_pair(4, 4);
+            if(game_page::item_list.contains(key))
+            {
+                auto item = game_page::item_list[key];
+                delete item;
+                game_page::item_list.remove(key);
+            }
+        }game_page::map[4][4][0]=ITEM_MINE;
+
+        mine *mine_11=new mine(resource_manager::instance().get_pic("mine_1"),"circle",3,3);
+        game_page::mine_list[std::make_pair(3,3)]=mine_11;
+        mine *mine_12=new mine(resource_manager::instance().get_pic("mine_2"),"square",3,4);
+        game_page::mine_list[std::make_pair(3,4)]=mine_12;
+        mine *mine_13=new mine(resource_manager::instance().get_pic("mine_2"),"square",4,3);
+        game_page::mine_list[std::make_pair(4,3)]=mine_13;
+        mine *mine_14=new mine(resource_manager::instance().get_pic("mine_1"),"circle",4,4);
+        game_page::mine_list[std::make_pair(4,4)]=mine_14;
 
     }
 }
@@ -221,17 +222,19 @@ void store_page::upgrade_hub()  // upgrade the hub
         {
             for (int j = 7; j<7 + hub::size; j++)
             {
-                if (game_page::map[i][j][0] != 0&&game_page::map[i][j][0]!=ITEM_HUB) {
+                if (game_page::map[i][j][0] != 0&&game_page::map[i][j][0]!=ITEM_HUB)
+                {
                     auto key = std::make_pair(i, j);
-                    if (game_page::item_list.contains(key)) {
+                    if (game_page::item_list.contains(key))
+                    {
                         auto item = game_page::item_list[key];
                         delete item;
                         game_page::item_list.remove(key);
                     }
-                    game_page::map[i][j][0] = ITEM_HUB;
-                    game_page::map[i][j][1] = 2;
-                    game_page::map[i][j][2] = 0;
                 }
+                game_page::map[i][j][0] = ITEM_HUB;
+                game_page::map[i][j][1] = 2;
+                game_page::map[i][j][2] = 0;
             }
         }
 
