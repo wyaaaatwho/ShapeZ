@@ -590,19 +590,14 @@ void game_page::save_map_to_file()
 
         //write game_level to the file
         out << hub::game_level << "\n";
+
+        //add hub size to the file
         out<< hub::size << "\n";
 
         //write coins to the file
         out << hub::coins << "\n";
         out << hub::coin_value << "\n";
 
-        // write the upgrades to the file
-        out << belt::belt_speed << "\n";
-
-        // write the miners to the file
-
-        //write cutter to the file
-        out << cutter::cutter_speed << "\n";
 
         //write mine to the file
         out << mine::upgraded << "\n";

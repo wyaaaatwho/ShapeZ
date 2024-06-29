@@ -152,19 +152,14 @@ void Startpage::load_map_from_file()
 
         //read game_level from the file
         in >> hub::game_level;
+
+        //read hub from the file
         in >> hub::size;
 
         //read coins from the file
         in >> hub::coins;
         in >> hub::coin_value;
 
-        // read the upgrades from the file
-        in >> belt::belt_speed;
-
-        // read the miners from the file
-
-        //read cutter from the file
-        in >> cutter::cutter_speed;
 
         //read mine from the file
         in >> mine::upgraded;

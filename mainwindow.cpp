@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->setupUi(this);
     this->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
     this->setWindowTitle("ShapeZ");
+    this->setWindowIcon(QIcon(QPixmap("resource/icon.png")));
 
     stacked_widget = new QStackedWidget(this);
     stacked_widget->setGeometry(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -33,6 +34,17 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     currentGamePage= new game_page(this);
     stacked_widget->addWidget(currentGamePage);
 
+
+    //set the music
+
+    player = new QMediaPlayer(this);
+    audioOutput = new QAudioOutput(this);
+    audioOutput->setVolume(1.0);
+    player->setAudioOutput(audioOutput);
+    player->setSource(QUrl::fromLocalFile("resource/music.mp3"));
+
+    connect(player, &QMediaPlayer::mediaStatusChanged, this, &MainWindow::onMediaStatusChanged);
+    player->play();
 
 
 

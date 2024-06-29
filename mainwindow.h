@@ -14,6 +14,8 @@
 #include <QIcon>
 #include <QWidget>
 #include <QStackedWidget>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include "game_page.h"
 
 
@@ -42,6 +44,8 @@ public:
 private:
     Ui::MainWindow *ui;
     QPushButton *button;
+    QMediaPlayer *player;
+    QAudioOutput *audioOutput;
 
 
 public slots:
@@ -53,6 +57,14 @@ public slots:
         else
             stop_time();
     }
+
+private slots:
+    void onMediaStatusChanged(QMediaPlayer::MediaStatus status)
+    {
+        if (status == QMediaPlayer::EndOfMedia) {
+            player->play();
+        }
+    };
 
 
 

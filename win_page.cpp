@@ -83,22 +83,22 @@ win_page::win_page(QWidget *parent):QWidget(parent)
 
     connect(belt_button, &QPushButton::clicked, this, &win_page::speed_up_belt);
 
-    back_button = new QPushButton("Back", this);belt_button = new QPushButton(this);
-    belt_button->setGeometry(QRect(QPoint(WINDOW_WIDTH / 2 - 160, WINDOW_HEIGHT - 80), QSize(80, 80)));
-    belt_button->setIcon(QPixmap("resource/belt_button"));
-    belt_button->setStyleSheet(("QPushButton {"
+    back_button = new QPushButton("Back", this);
+    back_button->setGeometry(QRect(QPoint(0, 0), QSize(80, 80)));
+    back_button->setIcon(QPixmap("resource/back_button.png"));
+    back_button->setStyleSheet(("QPushButton {"
                                 "font-size: 16px;"
                                 "border: 2px solid black; border-radius: 10px; "      // border style
                                 "background-color: lightgray;" // background color
                                 "padding: 5px;"                // padding
-                                "qproperty-iconSize: 60px 60px;" // icon size
+                                "qproperty-iconSize: 24px 24px;" // icon size
                                 "}"
                                 "QPushButton:hover {"
                                 "font-size: 16px;"
                                 "border: 2px solid blue;border-radius: 10px;"      // hover style
                                 " background-color: lightblue;" // hover background
                                 "}"));
-    connect(back_button, &QPushButton::clicked, [this](){emit changePage(4);});
+    connect(back_button, &QPushButton::clicked, [this](){emit changePage(0);});
 
 
     already_miner = false;

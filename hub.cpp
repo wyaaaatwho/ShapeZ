@@ -155,6 +155,7 @@ void hub:: finish_task()
     {
         task_finished=true;
     }
+
     if(task_finished)
     {
         hub::game_level++;
